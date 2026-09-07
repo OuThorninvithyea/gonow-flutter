@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
+
+/// Rounded outline field used across the auth screens.
+///
+/// Matches the Figma auth spec: 58.29pt tall, 30pt radius, 0.6pt `#8E8383`
+/// outline, with the placeholder sitting inline instead of a label above.
+class AppPillField extends StatelessWidget {
+  const AppPillField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    this.keyboardType = TextInputType.text,
+    this.obscureText = false,
+    this.validator,
+    this.textInputAction,
+    this.onFieldSubmitted,
+  });
+
+  static const double height = 58.289;
+
+  final TextEditingController controller;
+  final String hint;
+  final TextInputType keyboardType;
+  final bool obscureText;
+  final String? Function(String?)? validator;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    const border = OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(30)),
+      borderSide: BorderSide(color: AppColors.fieldBorder, width: 0.6),
+    );
+
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      validator: validator,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      style: const TextStyle(fontSize: 16, color: AppColors.ink),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPlaceholder,
+        ),
+        filled: false,
+        // Vertical padding is what produces the 58.29pt height alongside the
+        // 16pt text; a fixed SizedBox would clip the validation message.
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 18,
+        ),
+        border: border,
+        enabledBorder: border,
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderSide: BorderSide(color: AppColors.ink, width: 1.2),
+        ),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderSide: BorderSide(color: AppColors.danger, width: 0.6),
+        ),
+        focusedErrorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderSide: BorderSide(color: AppColors.danger, width: 1.2),
+        ),
+      ),
+    );
+  }
+}
