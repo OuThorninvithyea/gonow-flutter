@@ -25,12 +25,27 @@ class _ResetPasswordCodeScreenState extends State<ResetPasswordCodeScreen> {
   final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
   bool _loading = false;
+  bool _isValid = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController.addListener(_recomputeValidity);
+  }
 
   @override
   void dispose() {
     _codeController.dispose();
     super.dispose();
+  }
+
+  String? _validateCode(String? v) =>
+      (v == null || v.trim().length < 6) ? 'Enter the 6-digit code' : null;
+
+  void _recomputeValidity() {
+    final valid = _validateCode(_codeController.text) == null;
+    if (valid != _isValid) setState(() => _isValid = valid);
   }
 
   Future<void> _submit() async {
@@ -109,9 +124,7 @@ class _ResetPasswordCodeScreenState extends State<ResetPasswordCodeScreen> {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           onFieldSubmitted: (_) => _submit(),
-                          validator: (v) => (v == null || v.trim().length < 6)
-                              ? 'Enter the 6-digit code'
-                              : null,
+                          validator: _validateCode,
                         ),
                         if (_error != null) ...[
                           const SizedBox(height: 4),
@@ -127,6 +140,7 @@ class _ResetPasswordCodeScreenState extends State<ResetPasswordCodeScreen> {
                         AppPrimaryButton(
                           label: 'Verify',
                           loading: _loading,
+                          isValid: _isValid,
                           onPressed: _submit,
                         ),
                         const SizedBox(height: 20),

@@ -26,6 +26,14 @@ class _ResetNewPasswordScreenState extends State<ResetNewPasswordScreen> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   bool _loading = false;
+  bool _isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(_recomputeValidity);
+    _confirmController.addListener(_recomputeValidity);
+  }
 
   @override
   void dispose() {
@@ -48,6 +56,13 @@ class _ResetNewPasswordScreenState extends State<ResetNewPasswordScreen> {
     if (v == null || v.isEmpty) return 'Re-enter your password';
     if (v != _passwordController.text) return 'Passwords do not match';
     return null;
+  }
+
+  void _recomputeValidity() {
+    final valid =
+        _validatePassword(_passwordController.text) == null &&
+        _validateConfirm(_confirmController.text) == null;
+    if (valid != _isValid) setState(() => _isValid = valid);
   }
 
   Future<void> _submit() async {
@@ -120,6 +135,7 @@ class _ResetNewPasswordScreenState extends State<ResetNewPasswordScreen> {
                         AppPrimaryButton(
                           label: 'Verify',
                           loading: _loading,
+                          isValid: _isValid,
                           onPressed: _submit,
                         ),
                       ],

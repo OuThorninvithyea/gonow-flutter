@@ -19,11 +19,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
   bool _loading = false;
+  bool _isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _identifierController.addListener(_recomputeValidity);
+  }
 
   @override
   void dispose() {
     _identifierController.dispose();
     super.dispose();
+  }
+
+  String? _validateIdentifier(String? v) => (v == null || v.trim().isEmpty)
+      ? 'Enter your email, phone or username'
+      : null;
+
+  void _recomputeValidity() {
+    final valid = _validateIdentifier(_identifierController.text) == null;
+    if (valid != _isValid) setState(() => _isValid = valid);
   }
 
   Future<void> _submit() async {
@@ -81,14 +97,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           hint: 'Email & Username',
                           textInputAction: TextInputAction.done,
                           onFieldSubmitted: (_) => _submit(),
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? 'Enter your email, phone or username'
-                              : null,
+                          validator: _validateIdentifier,
                         ),
                         const SizedBox(height: 19),
                         AppPrimaryButton(
                           label: 'Continue',
                           loading: _loading,
+                          isValid: _isValid,
                           onPressed: _submit,
                         ),
                       ],

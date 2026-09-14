@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_pill_field.dart';
+import '../../widgets/app_primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,12 +19,35 @@ class _LoginScreenState extends State<LoginScreen> {
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _loading = false;
+  bool _isValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _identifierController.addListener(_recomputeValidity);
+    _passwordController.addListener(_recomputeValidity);
+  }
 
   @override
   void dispose() {
     _identifierController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  String? _validateIdentifier(String? v) => (v == null || v.trim().isEmpty)
+      ? 'Enter your email, phone or username'
+      : null;
+
+  String? _validatePassword(String? v) => (v == null || v.length < 6)
+      ? 'Password must be at least 6 characters'
+      : null;
+
+  void _recomputeValidity() {
+    final valid =
+        _validateIdentifier(_identifierController.text) == null &&
+        _validatePassword(_passwordController.text) == null;
+    if (valid != _isValid) setState(() => _isValid = valid);
   }
 
   Future<void> _submit() async {
@@ -94,9 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _identifierController,
                   hint: 'Email ,phone & username',
                   textInputAction: TextInputAction.next,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'Enter your email, phone or username'
-                      : null,
+                  validator: _validateIdentifier,
                 ),
                 const SizedBox(height: 12),
                 AppPillField(
@@ -105,9 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _submit(),
-                  validator: (v) => (v == null || v.length < 6)
-                      ? 'Password must be at least 6 characters'
-                      : null,
+                  validator: _validatePassword,
                 ),
                 const SizedBox(height: 12),
                 Align(
@@ -129,7 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                _SignInButton(loading: _loading, onPressed: _submit),
+                AppPrimaryButton(
+                  label: 'Sign in',
+                  loading: _loading,
+                  isValid: _isValid,
+                  onPressed: _submit,
+                ),
                 const SizedBox(height: 23),
                 const _OrDivider(),
                 const SizedBox(height: 19),
@@ -167,45 +192,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SignInButton extends StatelessWidget {
-  const _SignInButton({required this.loading, required this.onPressed});
-
-  final bool loading;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: AppPillField.height,
-      child: ElevatedButton(
-        onPressed: loading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.ink,
-          foregroundColor: AppColors.onDark,
-          disabledBackgroundColor: AppColors.ink,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-            side: const BorderSide(color: AppColors.fieldBorder, width: 0.6),
-          ),
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        ),
-        child: loading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.onDark,
-                ),
-              )
-            : const Text('Sign in'),
       ),
     );
   }

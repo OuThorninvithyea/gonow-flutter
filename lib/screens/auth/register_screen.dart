@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/phone_number.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_pill_field.dart';
+import '../../widgets/app_primary_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -23,6 +24,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _loading = false;
+  bool _isValid = false;
+  bool _termsAccepted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    for (final controller in [
+      _nameController,
+      _businessNameController,
+      _phoneController,
+      _emailController,
+      _passwordController,
+      _confirmPasswordController,
+    ]) {
+      controller.addListener(_recomputeValidity);
+    }
+  }
 
   @override
   void dispose() {
@@ -59,6 +77,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ).showSnackBar(SnackBar(content: Text('$what is not wired up yet.')));
   }
 
+  String? _validateName(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Enter your name' : null;
+
+  String? _validateEmail(String? v) {
+    final value = v?.trim() ?? '';
+    if (value.isEmpty) return 'Enter your email';
+    final looksLikeEmail = RegExp(
+      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+    ).hasMatch(value);
+    return looksLikeEmail ? null : 'Enter a valid email';
+  }
+
   String? _validateBusinessName(String? v) {
     final value = v?.trim() ?? '';
     if (value.isEmpty) return null; // Optional — blank registers as a person.
@@ -81,6 +111,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (v == null || v.isEmpty) return 'Re-enter your password';
     if (v != _passwordController.text) return 'Passwords do not match';
     return null;
+  }
+
+  void _onTermsChanged(bool accepted) {
+    _termsAccepted = accepted;
+    _recomputeValidity();
+  }
+
+  void _recomputeValidity() {
+    final valid =
+        _validateName(_nameController.text) == null &&
+        _validateBusinessName(_businessNameController.text) == null &&
+        validateCambodianPhone(_phoneController.text) == null &&
+        _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null &&
+        _validateConfirmPassword(_confirmPasswordController.text) == null &&
+        _termsAccepted;
+    if (valid != _isValid) setState(() => _isValid = valid);
   }
 
   @override
@@ -119,9 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _nameController,
                   hint: 'Name',
                   textInputAction: TextInputAction.next,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'Enter your name'
-                      : null,
+                  validator: _validateName,
                 ),
                 const SizedBox(height: 11),
                 AppPillField(
@@ -145,14 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hint: 'Email',
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return 'Enter your email';
-                    final looksLikeEmail = RegExp(
-                      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                    ).hasMatch(value);
-                    return looksLikeEmail ? null : 'Enter a valid email';
-                  },
+                  validator: _validateEmail,
                 ),
                 const SizedBox(height: 11),
                 AppPillField(
@@ -172,9 +210,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: _validateConfirmPassword,
                 ),
                 const SizedBox(height: 16),
-                _TermsAcceptance(onUnavailable: _notImplemented),
+                _TermsAcceptance(
+                  onUnavailable: _notImplemented,
+                  onChanged: _onTermsChanged,
+                ),
                 const SizedBox(height: 19),
-                _RegisterButton(loading: _loading, onPressed: _submit),
+                AppPrimaryButton(
+                  label: 'Register Now',
+                  loading: _loading,
+                  isValid: _isValid,
+                  onPressed: _submit,
+                ),
                 const SizedBox(height: 33),
                 Center(
                   child: Row(
@@ -219,9 +265,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 /// Neither document has a route yet, so the two links report back through
 /// [onUnavailable] the way the login screen handles its unwired actions.
 class _TermsAcceptance extends StatefulWidget {
-  const _TermsAcceptance({required this.onUnavailable});
+  const _TermsAcceptance({
+    required this.onUnavailable,
+    required this.onChanged,
+  });
 
   final void Function(String what) onUnavailable;
+  final ValueChanged<bool> onChanged;
 
   @override
   State<_TermsAcceptance> createState() => _TermsAcceptanceState();
@@ -272,7 +322,10 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
                   label: 'Accept the Terms of Service and Privacy Policy',
                   child: Checkbox(
                     value: accepted,
-                    onChanged: (v) => state.didChange(v ?? false),
+                    onChanged: (v) {
+                      state.didChange(v ?? false);
+                      widget.onChanged(v ?? false);
+                    },
                     activeColor: AppColors.ink,
                     checkColor: AppColors.onDark,
                     side: BorderSide(
@@ -323,45 +376,6 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
           ],
         );
       },
-    );
-  }
-}
-
-class _RegisterButton extends StatelessWidget {
-  const _RegisterButton({required this.loading, required this.onPressed});
-
-  final bool loading;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: AppPillField.height,
-      child: ElevatedButton(
-        onPressed: loading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.ink,
-          foregroundColor: AppColors.onDark,
-          disabledBackgroundColor: AppColors.ink,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-            side: const BorderSide(color: AppColors.fieldBorder, width: 0.6),
-          ),
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        ),
-        child: loading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.onDark,
-                ),
-              )
-            : const Text('Register Now'),
-      ),
     );
   }
 }
