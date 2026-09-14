@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/theme/app_colors.dart';
 
 /// Rounded outline field used across the auth screens.
@@ -15,6 +16,9 @@ class AppPillField extends StatelessWidget {
     this.validator,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.inputFormatters,
+    this.maxLength,
+    this.textAlign = TextAlign.start,
   });
 
   static const double height = 58.289;
@@ -26,6 +30,9 @@ class AppPillField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final TextAlign textAlign;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +48,9 @@ class AppPillField extends StatelessWidget {
       validator: validator,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
+      textAlign: textAlign,
       style: const TextStyle(fontSize: 16, color: AppColors.ink),
       decoration: InputDecoration(
         hintText: hint,
@@ -50,6 +60,7 @@ class AppPillField extends StatelessWidget {
           color: AppColors.textPlaceholder,
         ),
         filled: false,
+        counterText: maxLength != null ? '' : null,
         // Vertical padding is what produces the 58.29pt height alongside the
         // 16pt text; a fixed SizedBox would clip the validation message.
         contentPadding: const EdgeInsets.symmetric(

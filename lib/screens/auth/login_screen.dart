@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () => _notImplemented('Password recovery'),
+                    onTap: () => context.push('/forgot-password'),
                     behavior: HitTestBehavior.opaque,
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 4),
