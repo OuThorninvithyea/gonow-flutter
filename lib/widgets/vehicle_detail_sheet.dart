@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
+import 'vehicle_color_picker.dart';
 
 /// Bottom sheet showing full vehicle detail with a working "Rent now" CTA.
 ///
@@ -29,15 +30,32 @@ class _VehicleDetailSheet extends StatefulWidget {
 
 class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
   bool _booking = false;
+  late VehicleColorOption _selectedColor;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to the first available color rather than always colors[0], so
+    // a vehicle whose default paint is sold out doesn't open on a disabled
+    // option with nothing pre-selected.
+    _selectedColor = widget.vehicle.colors.firstWhere(
+      (c) => c.available,
+      orElse: () => widget.vehicle.colors.first,
+    );
+  }
 
   Future<void> _rentNow() async {
+    if (!_selectedColor.available) return;
     setState(() => _booking = true);
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.vehicle.name} booked. Enjoy the ride!'),
+        content: Text(
+          '${widget.vehicle.name} (${_selectedColor.name}) booked. '
+          'Enjoy the ride!',
+        ),
         backgroundColor: AppColors.ink,
       ),
     );
@@ -72,7 +90,7 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
             const SizedBox(height: 20),
             Center(
               child: Image.asset(
-                'assets/images/home/scooter.png',
+                _selectedColor.asset,
                 width: 160,
                 height: 160,
                 fit: BoxFit.cover,
@@ -123,16 +141,28 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
                 _Spec(icon: Icons.local_gas_station, label: vehicle.capacity),
               ],
             ),
+            if (vehicle.colors.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              VehicleColorPicker(
+                colors: vehicle.colors,
+                selected: _selectedColor,
+                onSelected: (c) => setState(() => _selectedColor = c),
+              ),
+            ],
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: _booking ? null : _rentNow,
+                onPressed: (_booking || !_selectedColor.available)
+                    ? null
+                    : _rentNow,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.onPrimary,
-                  disabledBackgroundColor: AppColors.primary,
+                  disabledBackgroundColor: _selectedColor.available
+                      ? AppColors.primary
+                      : AppColors.border,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -147,9 +177,11 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
                           color: AppColors.onPrimary,
                         ),
                       )
-                    : const Text(
-                        'Rent now',
-                        style: TextStyle(
+                    : Text(
+                        _selectedColor.available
+                            ? 'Rent now'
+                            : '${_selectedColor.name} sold out',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

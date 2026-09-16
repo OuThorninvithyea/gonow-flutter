@@ -99,6 +99,40 @@ void main() {
     expect(find.text('Rent now'), findsOneWidget);
   });
 
+  testWidgets('the rent sheet offers a color picker with an unavailable '
+      'color disabled', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final cardFinder = find.text('Fortuner GR');
+    await tester.ensureVisible(cardFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(cardFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Silver'), findsOneWidget);
+    expect(find.text('Sold out'), findsNothing);
+
+    final redSwatch = find.byWidgetPredicate(
+      (w) => w is Semantics && w.properties.label == 'Red, sold out',
+    );
+    expect(redSwatch, findsOneWidget);
+    await tester.tap(redSwatch, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Disabled swatch: selection must not change.
+    expect(find.text('Silver'), findsOneWidget);
+    expect(find.text('Sold out'), findsNothing);
+
+    final blackSwatch = find.byWidgetPredicate(
+      (w) => w is Semantics && w.properties.label == 'Black',
+    );
+    await tester.tap(blackSwatch);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Black'), findsOneWidget);
+  });
+
   testWidgets('the bell icon opens notifications', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();

@@ -1,3 +1,47 @@
+import 'package:flutter/material.dart';
+
+/// One selectable paint color for a vehicle (Figma: the 3-variant
+/// "pngtree-modern-electric-scooter..." component — Default/Variant2/
+/// Variant3 map to Silver/Black/Red).
+class VehicleColorOption {
+  const VehicleColorOption({
+    required this.name,
+    required this.swatch,
+    required this.asset,
+    this.available = true,
+  });
+
+  final String name;
+  final Color swatch;
+  final String asset;
+
+  /// Whether this color can currently be rented. Unavailable colors are
+  /// still shown in the picker (so the rider knows the option exists) but
+  /// are disabled with a "Sold out" label.
+  final bool available;
+}
+
+/// The three paint options every vehicle in the mock fleet ships with,
+/// straight from the Figma color-variant component.
+const vehicleColorOptions = <VehicleColorOption>[
+  VehicleColorOption(
+    name: 'Silver',
+    swatch: Color(0xFFC7CACD),
+    asset: 'assets/images/home/scooter.png',
+  ),
+  VehicleColorOption(
+    name: 'Black',
+    swatch: Color(0xFF1C1C1E),
+    asset: 'assets/images/home/scooter_black.png',
+  ),
+  VehicleColorOption(
+    name: 'Red',
+    swatch: Color(0xFF8B1E24),
+    asset: 'assets/images/home/scooter_red.png',
+    available: false, // Mock: sold out until restocked.
+  ),
+];
+
 /// A single rentable vehicle shown on the home feed and the full listing.
 ///
 /// [filterTag] must match one of the labels in the home screen's filter
@@ -19,6 +63,7 @@ class VehicleListing {
     this.category = 'e-scooter',
     this.distanceKm = 4.2,
     this.batteryPercent = 82,
+    this.colors = vehicleColorOptions,
   });
 
   final String id;
@@ -31,6 +76,10 @@ class VehicleListing {
   final String category;
   final double distanceKm;
   final int batteryPercent;
+
+  /// Available paint options for this vehicle, in display order. The first
+  /// entry is the default shown before the rider picks a color.
+  final List<VehicleColorOption> colors;
 }
 
 /// Mock fleet — swap for a real API call once the backend is available.
