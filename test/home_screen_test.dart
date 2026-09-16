@@ -32,10 +32,20 @@ Widget _wrap() {
   );
 }
 
+/// [HomeScreen] runs a `Timer.periodic` for the promo carousel, so
+/// `pumpAndSettle` never converges while it's on screen — it waits for
+/// "no pending frames", and the periodic timer always schedules another.
+/// Settle animations with a few bounded pumps instead.
+Future<void> _settle(WidgetTester tester) async {
+  for (var i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+}
+
 void main() {
   testWidgets('renders every section of the design', (tester) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.text('Standard member'), findsOneWidget);
     expect(find.text('Promotions Today 20%'), findsOneWidget);
@@ -51,7 +61,7 @@ void main() {
 
   testWidgets('falls back to a rider name when signed out', (tester) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     // No user on the provider, so the header must not render null or crash.
     expect(find.text('Rider'), findsOneWidget);
@@ -61,7 +71,7 @@ void main() {
   testWidgets('selecting a filter chip moves the highlight and swaps the '
       'featured vehicle', (tester) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     Color chipColor(String label) {
       final container = tester.widget<Container>(
@@ -76,7 +86,7 @@ void main() {
     expect(find.text('Fortuner GR'), findsOneWidget);
 
     await tester.tap(find.text('Daily'));
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(chipColor('Daily'), limeWhenDefault);
     expect(chipColor('Nearby'), isNot(limeWhenDefault));
@@ -88,13 +98,13 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     final cardFinder = find.text('Fortuner GR');
     await tester.ensureVisible(cardFinder);
-    await tester.pumpAndSettle();
+    await _settle(tester);
     await tester.tap(cardFinder);
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.text('Rent now'), findsOneWidget);
   });
@@ -102,13 +112,13 @@ void main() {
   testWidgets('the rent sheet offers a color picker with an unavailable '
       'color disabled', (tester) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     final cardFinder = find.text('Fortuner GR');
     await tester.ensureVisible(cardFinder);
-    await tester.pumpAndSettle();
+    await _settle(tester);
     await tester.tap(cardFinder);
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.text('Silver'), findsOneWidget);
     expect(find.text('Sold out'), findsNothing);
@@ -118,7 +128,7 @@ void main() {
     );
     expect(redSwatch, findsOneWidget);
     await tester.tap(redSwatch, warnIfMissed: false);
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     // Disabled swatch: selection must not change.
     expect(find.text('Silver'), findsOneWidget);
@@ -128,17 +138,17 @@ void main() {
       (w) => w is Semantics && w.properties.label == 'Black',
     );
     await tester.tap(blackSwatch);
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.text('Black'), findsOneWidget);
   });
 
   testWidgets('the bell icon opens notifications', (tester) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     await tester.tap(find.byKey(const Key('home_bell_button')));
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.text('Notifications'), findsOneWidget);
   });
@@ -147,10 +157,10 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     await tester.tap(find.text('View more'));
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     expect(find.byType(VehicleListScreen), findsOneWidget);
     expect(find.text('Choose your ride.'), findsOneWidget);
@@ -160,11 +170,26 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(_wrap());
-    await tester.pumpAndSettle();
+    await _settle(tester);
 
     await tester.tap(find.text('Rentals'));
     await tester.pump();
 
     expect(find.textContaining('coming soon'), findsOneWidget);
+  });
+
+  testWidgets('the promo banner rotates to the next slide after 3 seconds', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await _settle(tester);
+
+    expect(find.text('Promotions Today 20%'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 3));
+    await _settle(tester);
+
+    expect(find.text('Weekend Special'), findsOneWidget);
+    expect(find.text('Promotions Today 20%'), findsNothing);
   });
 }

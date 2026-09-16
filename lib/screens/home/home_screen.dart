@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -272,52 +274,149 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _PromoBanner extends StatelessWidget {
+/// One slide of the rotating promo carousel.
+class _Promo {
+  const _Promo({
+    required this.asset,
+    required this.headline,
+    required this.subtitle,
+  });
+
+  final String asset;
+  final String headline;
+  final String subtitle;
+}
+
+const _promos = [
+  _Promo(
+    asset: 'assets/images/home/promo.jpg',
+    headline: 'Promotions Today 20%',
+    subtitle: 'Book your Scooter now!!',
+  ),
+  _Promo(
+    asset: 'assets/images/home/promo2.jpg',
+    headline: 'Weekend Special',
+    subtitle: 'Ride free on your first hour',
+  ),
+  _Promo(
+    asset: 'assets/images/home/promo3.jpg',
+    headline: 'New Fleet Arrived',
+    subtitle: 'Try the latest e-scooters today',
+  ),
+  _Promo(
+    asset: 'assets/images/home/promo4.jpg',
+    headline: 'Refer & Earn',
+    subtitle: 'Invite a friend, get \$5 credit',
+  ),
+];
+
+/// Auto-rotating promo banner. Cycles through [_promos] every 3 seconds
+/// with a crossfade, and shows a dot indicator for the current slide.
+class _PromoBanner extends StatefulWidget {
   const _PromoBanner();
 
   @override
+  State<_PromoBanner> createState() => _PromoBannerState();
+}
+
+class _PromoBannerState extends State<_PromoBanner> {
+  int _index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+      setState(() => _index = (_index + 1) % _promos.length);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final promo = _promos[_index];
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(30),
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/home/promo.jpg',
-              fit: BoxFit.cover,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child: Image.asset(
+                promo.asset,
+                key: ValueKey(promo.asset),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
             ),
           ),
           // Scrim from the design — without it the white copy is unreadable
           // against the busy illustration.
           Positioned.fill(child: Container(color: const Color(0x63080707))),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(24, 15, 24, 15),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 15, 24, 15),
             child: SizedBox(
               height: 112,
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Promotions Today 20%',
-                    style: TextStyle(
-                      fontSize: 24,
-                      height: 22 / 24,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.18,
-                      color: AppColors.onDark,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Column(
+                      key: ValueKey(promo.headline),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          promo.headline,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            height: 22 / 24,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.18,
+                            color: AppColors.onDark,
+                          ),
+                        ),
+                        const SizedBox(height: 9),
+                        Text(
+                          promo.subtitle,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            height: 22 / 13,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.18,
+                            color: AppColors.onDark,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 9),
-                  Text(
-                    'Book your Scooter now!!',
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 22 / 13,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.18,
-                      color: AppColors.onDark,
-                    ),
+                  Row(
+                    children: [
+                      for (var i = 0; i < _promos.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 6),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: i == _index ? 16 : 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: i == _index
+                                ? AppColors.primary
+                                : AppColors.onDarkMuted,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),
