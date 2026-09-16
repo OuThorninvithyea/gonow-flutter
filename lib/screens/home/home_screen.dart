@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../models/vehicle_listing.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_bottom_nav.dart';
+import '../../widgets/vehicle_detail_sheet.dart';
 
-/// Filter chips above the featured scooter.
+/// Filter chips above the featured scooter, in display order.
 const _filters = ['Nearby', 'Battery 80%+', 'Daily', 'Weekly'];
 
 class HomeScreen extends StatefulWidget {
@@ -18,15 +21,32 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _filterIndex = 0;
 
-  void _notImplemented(String what) {
+  VehicleListing get _featuredVehicle {
+    final tag = _filters[_filterIndex];
+    return vehicleListings.firstWhere(
+      (v) => v.filterTag == tag,
+      orElse: () => vehicleListings.first,
+    );
+  }
+
+  void _comingSoon(String what) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('$what is not built yet.')));
+    ).showSnackBar(SnackBar(content: Text('$what is coming soon.')));
+  }
+
+  void _showNotifications() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _NotificationsSheet(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
+    final vehicle = _featuredVehicle;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -41,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: _Header(
                   name: user?.fullName ?? 'Rider',
-                  onBellTap: () => _notImplemented('Notifications'),
+                  onBellTap: _showNotifications,
                 ),
               ),
               const SizedBox(height: 15),
@@ -58,26 +78,32 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: _SectionHeader(
-                  onViewMore: () => _notImplemented('The scooter list'),
+                  onViewMore: () => context.push('/vehicles'),
                 ),
               ),
               const SizedBox(height: 52),
               Center(
-                child: Image.asset(
-                  'assets/images/home/scooter.png',
-                  width: 210,
-                  height: 210,
-                  fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () => showVehicleDetailSheet(context, vehicle),
+                  child: Image.asset(
+                    'assets/images/home/scooter.png',
+                    width: 210,
+                    height: 210,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(height: 74),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: _VehicleCard(
-                  name: 'Fortuner GR',
-                  range: '> 870km',
-                  capacity: '50L',
-                  price: r'$ 7.5/day',
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: GestureDetector(
+                  onTap: () => showVehicleDetailSheet(context, vehicle),
+                  child: _VehicleCard(
+                    name: vehicle.name,
+                    range: vehicle.range,
+                    capacity: vehicle.capacity,
+                    price: vehicle.price,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -89,8 +115,77 @@ class _HomeScreenState extends State<HomeScreen> {
         current: AppNavTab.home,
         onTap: (tab) {
           if (tab == AppNavTab.home) return;
-          _notImplemented('The ${tab.name} tab');
+          _comingSoon('The ${tab.name} tab');
         },
+      ),
+    );
+  }
+}
+
+class _NotificationsSheet extends StatelessWidget {
+  const _NotificationsSheet();
+
+  static const _notifications = [
+    ('Booking confirmed', 'Your Fortuner GR is reserved for today.'),
+    ('Promotion', '20% off all scooters this week only.'),
+    ('Battery alert', 'Nearby scooters are fully charged and ready.'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(25, 12, 25, 25),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Notifications',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppColors.ink,
+              ),
+            ),
+            const SizedBox(height: 16),
+            for (final n in _notifications) ...[
+              Text(
+                n.$1,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                n.$2,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.inkSoft,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -153,6 +248,7 @@ class _Header extends StatelessWidget {
           ],
         ),
         GestureDetector(
+          key: const Key('home_bell_button'),
           onTap: onBellTap,
           behavior: HitTestBehavior.opaque,
           child: SizedBox(

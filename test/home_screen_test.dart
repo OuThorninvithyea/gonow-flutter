@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gonow/providers/auth_provider.dart';
+import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/home_screen.dart';
+import 'package:gonow/screens/home/vehicle_list_screen.dart';
 import 'package:gonow/widgets/app_bottom_nav.dart';
 
 late AuthProvider auth;
 
 Widget _wrap() {
   auth = AuthProvider();
-  return ChangeNotifierProvider.value(
-    value: auth,
-    child: const MaterialApp(home: HomeScreen()),
+  final router = GoRouter(
+    initialLocation: '/home',
+    routes: [
+      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+      GoRoute(
+        path: '/vehicles',
+        builder: (_, _) => const VehicleListScreen(),
+      ),
+    ],
+  );
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(value: auth),
+      ChangeNotifierProvider(create: (_) => SavedVehiclesProvider()),
+    ],
+    child: MaterialApp.router(routerConfig: router),
   );
 }
 
@@ -42,7 +58,8 @@ void main() {
     expect(find.text('R'), findsOneWidget, reason: 'avatar initial');
   });
 
-  testWidgets('selecting a filter chip moves the highlight', (tester) async {
+  testWidgets('selecting a filter chip moves the highlight and swaps the '
+      'featured vehicle', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
@@ -56,12 +73,53 @@ void main() {
     }
 
     final limeWhenDefault = chipColor('Nearby');
+    expect(find.text('Fortuner GR'), findsOneWidget);
 
     await tester.tap(find.text('Daily'));
     await tester.pumpAndSettle();
 
     expect(chipColor('Daily'), limeWhenDefault);
     expect(chipColor('Nearby'), isNot(limeWhenDefault));
+    expect(find.text('City Hopper'), findsOneWidget);
+    expect(find.text('Fortuner GR'), findsNothing);
+  });
+
+  testWidgets('tapping the vehicle card opens the rent sheet', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final cardFinder = find.text('Fortuner GR');
+    await tester.ensureVisible(cardFinder);
+    await tester.pumpAndSettle();
+    await tester.tap(cardFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rent now'), findsOneWidget);
+  });
+
+  testWidgets('the bell icon opens notifications', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('home_bell_button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Notifications'), findsOneWidget);
+  });
+
+  testWidgets('View more navigates to the full vehicle list', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('View more'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(VehicleListScreen), findsOneWidget);
+    expect(find.text('Choose your ride.'), findsOneWidget);
   });
 
   testWidgets('unbuilt nav tabs say so rather than doing nothing', (
@@ -73,6 +131,6 @@ void main() {
     await tester.tap(find.text('Rentals'));
     await tester.pump();
 
-    expect(find.textContaining('not built yet'), findsOneWidget);
+    expect(find.textContaining('coming soon'), findsOneWidget);
   });
 }
