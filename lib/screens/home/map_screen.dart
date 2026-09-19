@@ -32,10 +32,16 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late int _filterIndex = _initialFilterIndex();
+  late int _filterIndex = _filterIndexFor(widget.vehicle);
 
-  int _initialFilterIndex() {
-    final vehicle = widget.vehicle;
+  /// What the search box shows in place of its hint once the rider has
+  /// picked somewhere via [_openPickupSearch] — null means "show the hint".
+  late String? _searchedLocation = widget.vehicle?.location;
+
+  /// [_filterIndex] resolves a filter tab to a vehicle; a search pick needs
+  /// the inverse, so both the initial `widget.vehicle` and a freshly
+  /// selected search result go through this one lookup.
+  int _filterIndexFor(VehicleListing? vehicle) {
     if (vehicle == null) return 0;
     final index = _filters.indexOf(vehicle.filterTag);
     return index == -1 ? 0 : index;
@@ -47,6 +53,24 @@ class _MapScreenState extends State<MapScreen> {
       (v) => v.filterTag == tag,
       orElse: () => vehicleListings.first,
     );
+  }
+
+  /// Opens the search sheet and, if the rider picks a result, moves the map
+  /// to that vehicle's filter/card. There's no geocoding API behind this —
+  /// it matches against the same mock fleet everything else on this screen
+  /// already uses, by name, area, and filter tag.
+  Future<void> _openPickupSearch() async {
+    final selected = await showModalBottomSheet<VehicleListing>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => const _PickupSearchSheet(),
+    );
+    if (selected == null || !mounted) return;
+    setState(() {
+      _filterIndex = _filterIndexFor(selected);
+      _searchedLocation = selected.location;
+    });
   }
 
   @override
@@ -66,10 +90,18 @@ class _MapScreenState extends State<MapScreen> {
               _Header(
                 onBack: () =>
                     context.canPop() ? context.pop() : context.go('/home'),
+                onSearchTap: _openPickupSearch,
+                searchLabel: _searchedLocation ?? 'Search pickup location',
+                hasSearchValue: _searchedLocation != null,
               ),
               _FilterChips(
                 selected: _filterIndex,
-                onSelected: (i) => setState(() => _filterIndex = i),
+                onSelected: (i) => setState(() {
+                  _filterIndex = i;
+                  // A manual filter tap supersedes a prior search pick, so
+                  // the search box shouldn't keep showing a stale location.
+                  _searchedLocation = null;
+                }),
               ),
               const Spacer(),
               _NearbyScooterCard(
@@ -111,9 +143,17 @@ class _MapBackground extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack});
+  const _Header({
+    required this.onBack,
+    required this.onSearchTap,
+    required this.searchLabel,
+    required this.hasSearchValue,
+  });
 
   final VoidCallback onBack;
+  final VoidCallback onSearchTap;
+  final String searchLabel;
+  final bool hasSearchValue;
 
   @override
   Widget build(BuildContext context) {
@@ -177,29 +217,254 @@ class _Header extends StatelessWidget {
                   ),
                   const SizedBox(width: 9),
                   Expanded(
-                    child: Container(
-                      height: 43,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.search, size: 20, color: AppColors.ink),
-                          SizedBox(width: 12),
-                          Text(
-                            'Search pickup location',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.ink,
-                            ),
+                    child: Semantics(
+                      button: true,
+                      label: 'Search pickup location',
+                      value: hasSearchValue ? searchLabel : null,
+                      child: GestureDetector(
+                        onTap: onSearchTap,
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          height: 43,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.search,
+                                size: 20,
+                                color: AppColors.ink,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  searchLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: hasSearchValue
+                                        ? FontWeight.w600
+                                        : FontWeight.w400,
+                                    color: hasSearchValue
+                                        ? AppColors.ink
+                                        : AppColors.inkSoft,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Bottom sheet for "Search pickup location" — filters the same mock fleet
+/// the rest of the map screen uses by scooter name, area, or filter tag.
+/// Returns the picked [VehicleListing] via `Navigator.pop`, or null if the
+/// rider dismisses it without choosing one.
+class _PickupSearchSheet extends StatefulWidget {
+  const _PickupSearchSheet();
+
+  @override
+  State<_PickupSearchSheet> createState() => _PickupSearchSheetState();
+}
+
+class _PickupSearchSheetState extends State<_PickupSearchSheet> {
+  final _controller = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  List<VehicleListing> get _results {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) return vehicleListings;
+    return vehicleListings
+        .where(
+          (v) =>
+              v.name.toLowerCase().contains(query) ||
+              v.location.toLowerCase().contains(query) ||
+              v.filterTag.toLowerCase().contains(query),
+        )
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final results = _results;
+
+    return Padding(
+      // Keeps the sheet above the keyboard instead of letting it cover
+      // the text field.
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Search pickup location',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _controller,
+                autofocus: true,
+                textInputAction: TextInputAction.search,
+                onChanged: (value) => setState(() => _query = value),
+                style: const TextStyle(fontSize: 14, color: AppColors.ink),
+                decoration: InputDecoration(
+                  hintText: 'Search by scooter or area',
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.inkSoft,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    size: 20,
+                    color: AppColors.inkSoft,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.canvas,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Flexible(
+                child: results.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Text(
+                          'No pickup locations match "${_query.trim()}".',
+                          style: const TextStyle(color: AppColors.inkSoft),
+                        ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: results.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 4),
+                        itemBuilder: (context, index) {
+                          final result = results[index];
+                          return _PickupResultTile(
+                            vehicle: result,
+                            onTap: () => Navigator.of(context).pop(result),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PickupResultTile extends StatelessWidget {
+  const _PickupResultTile({required this.vehicle, required this.onTap});
+
+  final VehicleListing vehicle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.surfaceTile,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.electric_scooter,
+                  size: 20,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      vehicle.name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      vehicle.location,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.inkSoft,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                '${vehicle.distanceKm} km',
+                style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
               ),
             ],
           ),

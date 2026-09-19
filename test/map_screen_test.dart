@@ -90,4 +90,87 @@ void main() {
     // default "Nearby" pick.
     expect(find.text('From ${weekender.price}'), findsOneWidget);
   });
+
+  testWidgets('tapping search opens the pickup search sheet', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Search pickup location'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Search by scooter or area'), findsOneWidget);
+    for (final v in vehicleListings) {
+      expect(find.text(v.name), findsOneWidget);
+    }
+  });
+
+  testWidgets('typing filters the pickup search results', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Search pickup location'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'Volt');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Volt Cruiser'), findsOneWidget);
+    expect(find.text('Fortuner GR'), findsNothing);
+  });
+
+  testWidgets('a query matching nothing shows the empty state', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Search pickup location'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'nonexistent scooter zzz');
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('No pickup locations match'), findsOneWidget);
+  });
+
+  testWidgets(
+    'picking a search result swaps the filter and card, and updates the '
+    'search box label',
+    (tester) async {
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+
+      final volt = vehicleListings.firstWhere((v) => v.name == 'Volt Cruiser');
+      expect(find.text('From ${volt.price}'), findsNothing);
+
+      await tester.tap(find.text('Search pickup location'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Volt Cruiser'));
+      await tester.pumpAndSettle();
+
+      // Sheet closed, card and filter now reflect the picked vehicle.
+      expect(find.text('Search by scooter or area'), findsNothing);
+      expect(find.text('From ${volt.price}'), findsOneWidget);
+      expect(find.text(volt.location), findsOneWidget);
+    },
+  );
+
+  testWidgets('manually changing the filter clears a prior search pick', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Search pickup location'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Volt Cruiser'));
+    await tester.pumpAndSettle();
+
+    final volt = vehicleListings.firstWhere((v) => v.name == 'Volt Cruiser');
+    expect(find.text(volt.location), findsOneWidget);
+
+    await tester.tap(find.text('Daily'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Search pickup location'), findsOneWidget);
+    expect(find.text(volt.location), findsNothing);
+  });
 }
