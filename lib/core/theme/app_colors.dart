@@ -69,6 +69,32 @@ class AppColors {
   /// Label on the inactive dark chip.
   static const onDarkChip = Color(0xFFC5C6C8);
 
+  // --- Rental plan screen (Figma "Choose your rental plan.") --------------
+
+  /// Warm off-white page background behind the plan cards.
+  static const canvas = Color(0xFFF7F8F4);
+
+  /// Outline of an unselected plan card.
+  static const planBorder = Color(0xFFE0E3DC);
+
+  /// Outline of an unselected plan radio.
+  static const planRadioBorder = Color(0xFFBEC4BC);
+
+  /// Supporting copy inside a plan card.
+  static const planSubtitle = Color(0xFF59605C);
+
+  /// Small grey field labels ("Starts", "Return by").
+  static const planLabel = Color(0xFF858C8A);
+
+  /// Fill of the small "Change" chip.
+  static const planChip = Color(0xFFF0F2ED);
+
+  /// Dashed rule inside the schedule card.
+  static const planDivider = Color(0xFFDCE0D9);
+
+  /// Footnote under the schedule card.
+  static const planFootnote = Color(0xFF777E79);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

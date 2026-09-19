@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
 import 'vehicle_color_picker.dart';
@@ -47,18 +48,15 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
   Future<void> _rentNow() async {
     if (!_selectedColor.available) return;
     setState(() => _booking = true);
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
+    // Grab the router before popping: the sheet's context is defunct once
+    // it's gone, so it can't be used to push the next route.
+    final router = GoRouter.of(context);
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${widget.vehicle.name} (${_selectedColor.name}) booked. '
-          'Enjoy the ride!',
-        ),
-        backgroundColor: AppColors.ink,
-      ),
-    );
+    // Renting now picks a plan rather than booking outright — Figma
+    // "Choose your rental plan." is the next step in the flow.
+    await router.push<void>('/rental-plan', extra: widget.vehicle);
   }
 
   @override
@@ -179,7 +177,7 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
                       )
                     : Text(
                         _selectedColor.available
-                            ? 'Rent now'
+                            ? 'Choose rental plan'
                             : '${_selectedColor.name} sold out',
                         style: const TextStyle(
                           fontSize: 16,
