@@ -18,14 +18,28 @@ const _filters = ['Nearby', 'Battery 80%+', 'Daily', 'Weekly'];
 /// picture. Swap [_MapBackground] for a real map widget once an API key
 /// exists — everything else here should keep working unchanged.
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({super.key, this.vehicle});
+
+  /// The vehicle to focus on when arriving here to locate a specific
+  /// scooter (e.g. "Start Navigation" from the booking-confirmed screen).
+  /// Picks the matching filter chip so the nearby-scooter card shows this
+  /// vehicle rather than whatever "Nearby" resolves to. Omit for the plain
+  /// nav-tab entry point, which just shows the default filter.
+  final VehicleListing? vehicle;
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  int _filterIndex = 0;
+  late int _filterIndex = _initialFilterIndex();
+
+  int _initialFilterIndex() {
+    final vehicle = widget.vehicle;
+    if (vehicle == null) return 0;
+    final index = _filters.indexOf(vehicle.filterTag);
+    return index == -1 ? 0 : index;
+  }
 
   VehicleListing get _nearestVehicle {
     final tag = _filters[_filterIndex];
@@ -46,7 +60,13 @@ class _MapScreenState extends State<MapScreen> {
           const Positioned.fill(child: _MapBackground()),
           Column(
             children: [
-              _Header(onBack: () => context.go('/home')),
+              // Reachable both as a nav tab (nothing to pop, go home) and
+              // pushed on top of another screen (e.g. "Start Navigation"
+              // from booking-confirmed) — pop back there when possible.
+              _Header(
+                onBack: () =>
+                    context.canPop() ? context.pop() : context.go('/home'),
+              ),
               _FilterChips(
                 selected: _filterIndex,
                 onSelected: (i) => setState(() => _filterIndex = i),
@@ -65,7 +85,7 @@ class _MapScreenState extends State<MapScreen> {
         onTap: (tab) {
           if (tab == AppNavTab.map) return;
           if (tab == AppNavTab.home) {
-            context.go('/home');
+            context.canPop() ? context.pop() : context.go('/home');
             return;
           }
           ScaffoldMessenger.of(context).showSnackBar(

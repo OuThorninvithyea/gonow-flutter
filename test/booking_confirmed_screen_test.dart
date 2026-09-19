@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gonow/models/booking.dart';
 import 'package:gonow/models/rental_plan.dart';
 import 'package:gonow/models/vehicle_listing.dart';
@@ -17,14 +18,34 @@ Booking _booking() {
   );
 }
 
+Widget _wrap(Booking booking) {
+  final router = GoRouter(
+    initialLocation: '/confirmed',
+    routes: [
+      GoRoute(
+        path: '/confirmed',
+        builder: (context, state) => BookingConfirmedScreen(booking: booking),
+      ),
+      GoRoute(
+        path: '/map',
+        builder: (context, state) {
+          final vehicle = state.extra! as VehicleListing;
+          // The route only needs to prove the right vehicle arrived; the
+          // map screen itself is covered by its own tests.
+          return Scaffold(body: Text('map screen for ${vehicle.code}'));
+        },
+      ),
+    ],
+  );
+  return MaterialApp.router(routerConfig: router);
+}
+
 void main() {
   testWidgets('renders the booking id, vehicle, schedule and paid total', (
     tester,
   ) async {
     final booking = _booking();
-    await tester.pumpWidget(
-      MaterialApp(home: BookingConfirmedScreen(booking: booking)),
-    );
+    await tester.pumpWidget(_wrap(booking));
 
     expect(find.text('Booking Confirmed'), findsOneWidget);
     expect(find.text(booking.bookingId), findsOneWidget);
@@ -58,9 +79,7 @@ void main() {
     );
 
     final booking = _booking();
-    await tester.pumpWidget(
-      MaterialApp(home: BookingConfirmedScreen(booking: booking)),
-    );
+    await tester.pumpWidget(_wrap(booking));
 
     await tester.tap(find.text('Copy'));
     await tester.pumpAndSettle();
@@ -69,15 +88,24 @@ void main() {
     expect(find.text('Booking ID copied.'), findsOneWidget);
   });
 
-  testWidgets('Start Navigation and View Booking are wired, not dead taps', (
+  testWidgets('Start Navigation opens the map screen for the booked vehicle', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      MaterialApp(home: BookingConfirmedScreen(booking: _booking())),
-    );
+    final booking = _booking();
+    await tester.pumpWidget(_wrap(booking));
 
     await tester.tap(find.text('Start Navigation'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('map screen for ${booking.vehicle.code}'), findsOneWidget);
+  });
+
+  testWidgets('View Booking is wired, not a dead tap', (tester) async {
+    await tester.pumpWidget(_wrap(_booking()));
+
+    await tester.tap(find.text('View Booking'));
     await tester.pump();
+
     expect(find.textContaining('coming soon'), findsOneWidget);
   });
 }

@@ -4,11 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:gonow/models/vehicle_listing.dart';
 import 'package:gonow/screens/home/map_screen.dart';
 
-Widget _wrap() {
+Widget _wrap({VehicleListing? vehicle}) {
   final router = GoRouter(
     initialLocation: '/map',
     routes: [
-      GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
+      GoRoute(
+        path: '/map',
+        builder: (_, _) => MapScreen(vehicle: vehicle),
+      ),
       GoRoute(
         path: '/home',
         builder: (_, _) => const Scaffold(body: Text('home screen')),
@@ -72,5 +75,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('home screen'), findsOneWidget);
+  });
+
+  testWidgets('a vehicle argument pre-selects its filter and card', (
+    tester,
+  ) async {
+    final weekender = vehicleListings.firstWhere(
+      (v) => v.filterTag == 'Weekly',
+    );
+    await tester.pumpWidget(_wrap(vehicle: weekender));
+    await tester.pumpAndSettle();
+
+    // Deep-linked in on "Weekender X" (tagged Weekly) rather than the
+    // default "Nearby" pick.
+    expect(find.text('From ${weekender.price}'), findsOneWidget);
   });
 }

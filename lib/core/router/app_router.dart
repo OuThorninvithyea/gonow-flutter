@@ -47,7 +47,11 @@ final appRouter = GoRouter(
       builder: (context, state) => const ResetNewPasswordScreen(),
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-    GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
+    GoRoute(
+      path: '/map',
+      builder: (context, state) =>
+          MapScreen(vehicle: state.extra as VehicleListing?),
+    ),
     GoRoute(
       path: '/vehicles',
       builder: (context, state) => const VehicleListScreen(),
