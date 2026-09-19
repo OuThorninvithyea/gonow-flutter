@@ -95,6 +95,41 @@ class AppColors {
   /// Footnote under the schedule card.
   static const planFootnote = Color(0xFF777E79);
 
+  // --- Payment flow (Figma "payment-flow": booking summary, processing,
+  // and booking-confirmed screens) -----------------------------------------
+
+  /// Hairline divider inside receipt-style cards.
+  static const receiptDivider = Color(0xFFEDF0EB);
+
+  /// Muted price-breakdown row label/value on a white card.
+  static const receiptMuted = Color(0xFF747C7A);
+
+  /// Body copy inside the processing/success payment dialog.
+  static const dialogBody = Color(0xFF6D756F);
+
+  /// Track behind the payment-processing progress bar.
+  static const progressTrack = Color(0xFFE0E4DD);
+
+  /// Outline of the "Edit booking" pill on a receipt card.
+  static const receiptCardBorder = Color(0xFFD8DDD6);
+
+  /// Fill of the small battery/range chips on the booking-summary vehicle
+  /// card. One hex step off [surfaceTile] in the Figma file, so kept as
+  /// its own token rather than reusing that one.
+  static const receiptChip = Color(0xFFEFF0EA);
+
+  /// Location text on the booking-confirmed vehicle card.
+  static const receiptLocation = Color(0xFF6F7772);
+
+  /// Fill of the "I agree to the terms" pill.
+  static const termsChipBg = Color(0xFFE9ECE5);
+
+  /// Border of the unchecked terms checkbox.
+  static const checkboxBorder = Color(0xFF767676);
+
+  /// Checkmark glyph color on the lime "payment successful" badge.
+  static const successCheckDark = Color(0xFF203026);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

@@ -64,6 +64,8 @@ class VehicleListing {
     this.distanceKm = 4.2,
     this.batteryPercent = 82,
     this.colors = vehicleColorOptions,
+    this.code = 'GN-024',
+    this.location = 'Toul Kork, Phnom Penh',
   });
 
   final String id;
@@ -76,6 +78,15 @@ class VehicleListing {
   final String category;
   final double distanceKm;
   final int batteryPercent;
+
+  /// Short unit code shown on the booking-summary/confirmation receipts
+  /// (Figma "total-recipt" / "comfirm-booking": "GN-024"). Every mock
+  /// vehicle currently shares the same demo unit; give each its own once
+  /// there's a real fleet.
+  final String code;
+
+  /// Parking location shown on those same receipts.
+  final String location;
 
   /// Available paint options for this vehicle, in display order. The first
   /// entry is the default shown before the rider picks a color.

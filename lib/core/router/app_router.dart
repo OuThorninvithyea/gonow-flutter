@@ -1,6 +1,10 @@
 import 'package:go_router/go_router.dart';
+import '../../models/booking.dart';
 import '../../models/vehicle_listing.dart';
 import '../../screens/auth/forgot_password_screen.dart';
+import '../../screens/booking/booking_confirmed_screen.dart';
+import '../../screens/booking/booking_summary_screen.dart';
+import '../../screens/booking/payment_screen.dart';
 import '../../screens/booking/rental_plan_screen.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/otp_verification_screen.dart';
@@ -50,6 +54,21 @@ final appRouter = GoRouter(
       path: '/rental-plan',
       builder: (context, state) =>
           RentalPlanScreen(vehicle: state.extra! as VehicleListing),
+    ),
+    GoRoute(
+      path: '/booking-summary',
+      builder: (context, state) =>
+          BookingSummaryScreen(booking: state.extra! as Booking),
+    ),
+    GoRoute(
+      path: '/payment',
+      builder: (context, state) =>
+          PaymentScreen(booking: state.extra! as Booking),
+    ),
+    GoRoute(
+      path: '/booking-confirmed',
+      builder: (context, state) =>
+          BookingConfirmedScreen(booking: state.extra! as Booking),
     ),
   ],
 );

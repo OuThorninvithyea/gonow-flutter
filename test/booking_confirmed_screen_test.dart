@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:gonow/models/booking.dart';
+import 'package:gonow/models/rental_plan.dart';
+import 'package:gonow/models/vehicle_listing.dart';
+import 'package:gonow/screens/booking/booking_confirmed_screen.dart';
+
+Booking _booking() {
+  final start = DateTime(2026, 1, 1, 14, 30);
+  return Booking(
+    vehicle: vehicleListings.first,
+    plan: RentalPlan.weekly,
+    start: start,
+    end: start.add(RentalPlan.weekly.duration),
+    bookingId: 'GN-BK-1024',
+  );
+}
+
+void main() {
+  testWidgets('renders the booking id, vehicle, schedule and paid total', (
+    tester,
+  ) async {
+    final booking = _booking();
+    await tester.pumpWidget(
+      MaterialApp(home: BookingConfirmedScreen(booking: booking)),
+    );
+
+    expect(find.text('Booking Confirmed'), findsOneWidget);
+    expect(find.text(booking.bookingId), findsOneWidget);
+    expect(find.text(booking.vehicle.code), findsOneWidget);
+    expect(find.text('Weekly'), findsOneWidget);
+    expect(find.text('Paid'), findsOneWidget);
+    expect(find.text('KHQR'), findsOneWidget);
+    expect(find.text(booking.formattedTotal), findsOneWidget);
+    expect(find.text('Start Navigation'), findsOneWidget);
+    expect(find.text('View Booking'), findsOneWidget);
+  });
+
+  testWidgets('Copy puts the booking id on the clipboard', (tester) async {
+    // The platform Clipboard channel has no default test handler, so
+    // Clipboard.setData's future never resolves without one — mock it.
+    final messages = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          messages.add(call.arguments['text'] as String);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    final booking = _booking();
+    await tester.pumpWidget(
+      MaterialApp(home: BookingConfirmedScreen(booking: booking)),
+    );
+
+    await tester.tap(find.text('Copy'));
+    await tester.pumpAndSettle();
+
+    expect(messages, [booking.bookingId]);
+    expect(find.text('Booking ID copied.'), findsOneWidget);
+  });
+
+  testWidgets('Start Navigation and View Booking are wired, not dead taps', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(home: BookingConfirmedScreen(booking: _booking())),
+    );
+
+    await tester.tap(find.text('Start Navigation'));
+    await tester.pump();
+    expect(find.textContaining('coming soon'), findsOneWidget);
+  });
+}

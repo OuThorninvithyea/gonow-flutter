@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/date_format.dart';
+import '../../models/booking.dart';
 import '../../models/rental_plan.dart';
 import '../../models/vehicle_listing.dart';
 
@@ -69,42 +71,15 @@ class _RentalPlanScreenState extends State<RentalPlanScreen> {
   }
 
   void _continue() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppColors.ink,
-        content: Text(
-          '${widget.vehicle.name} · ${_plan.title} plan '
-          '(${_plan.amount}${_plan.unit}) from ${_formatDateTime(_start)}.',
-        ),
-      ),
+    final booking = Booking(
+      vehicle: widget.vehicle,
+      plan: _plan,
+      start: _start,
+      end: _end,
+      // Mock booking reference — a real backend would issue this.
+      bookingId: 'GN-BK-${_start.millisecondsSinceEpoch % 10000}',
     );
-  }
-
-  /// Figma shows relative day names near the start date ("Today",
-  /// "Tomorrow", "Next Monday") and falls back to a date ("25 May") further
-  /// out, so mirror that rather than always printing a raw date.
-  String _formatDateTime(DateTime value) {
-    final today = DateTime.now();
-    final startOfToday = DateTime(today.year, today.month, today.day);
-    final days = DateTime(
-      value.year,
-      value.month,
-      value.day,
-    ).difference(startOfToday).inDays;
-
-    final String day;
-    if (days == 0) {
-      day = 'Today';
-    } else if (days == 1) {
-      day = 'Tomorrow';
-    } else if (days < 7) {
-      day = DateFormat('EEEE').format(value);
-    } else if (days < 14) {
-      day = 'Next ${DateFormat('EEEE').format(value)}';
-    } else {
-      day = DateFormat('d MMM').format(value);
-    }
-    return '$day · ${DateFormat('h:mm a').format(value)}';
+    context.push<void>('/booking-summary', extra: booking);
   }
 
   @override
@@ -134,8 +109,8 @@ class _RentalPlanScreenState extends State<RentalPlanScreen> {
                   ],
                   const SizedBox(height: 28),
                   _ScheduleCard(
-                    startLabel: _formatDateTime(_start),
-                    returnLabel: _formatDateTime(_end),
+                    startLabel: formatRentalDateTime(_start),
+                    returnLabel: formatRentalDateTime(_end),
                     onChange: _changeStart,
                   ),
                   const SizedBox(height: 16),
@@ -294,18 +269,12 @@ class _PlanCard extends StatelessWidget {
                   color: selected ? AppColors.ink : null,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: selected
-                        ? AppColors.ink
-                        : AppColors.planRadioBorder,
+                    color: selected ? AppColors.ink : AppColors.planRadioBorder,
                     width: 0.7,
                   ),
                 ),
                 child: selected
-                    ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: AppColors.onDark,
-                      )
+                    ? const Icon(Icons.check, size: 16, color: AppColors.onDark)
                     : null,
               ),
               const SizedBox(width: 16),
@@ -392,7 +361,9 @@ class _ScheduleCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _Field(label: 'Starts', value: startLabel)),
+              Expanded(
+                child: _Field(label: 'Starts', value: startLabel),
+              ),
               GestureDetector(
                 onTap: onChange,
                 behavior: HitTestBehavior.opaque,
