@@ -66,14 +66,17 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.map,
         onTap: (tab) {
-          if (tab == AppNavTab.map) return;
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
           if (tab == AppNavTab.home) {
             context.canPop() ? context.pop() : context.go('/home');
             return;
           }
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('The ${tab.name} tab is coming soon.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
+          );
         },
       ),
     );
@@ -104,8 +107,7 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
+            onTap: () => context.canPop() ? context.pop() : context.go('/home'),
             behavior: HitTestBehavior.opaque,
             child: Container(
               width: 44,
@@ -115,7 +117,11 @@ class _Header extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.inkBorder, width: 0.7),
               ),
-              child: const Icon(Icons.arrow_back, color: AppColors.onDark, size: 22),
+              child: const Icon(
+                Icons.arrow_back,
+                color: AppColors.onDark,
+                size: 22,
+              ),
             ),
           ),
           const SizedBox(height: 15),
@@ -266,9 +272,7 @@ class _ResultsBar extends StatelessWidget {
             ],
           ),
           OutlinedButton(
-            onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Map view is coming soon.')),
-            ),
+            onPressed: () => context.push('/map'),
             style: OutlinedButton.styleFrom(
               minimumSize: Size.zero,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -378,9 +382,9 @@ class _VehicleTile extends StatelessWidget {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => context
-                          .read<SavedVehiclesProvider>()
-                          .toggle(vehicle.id),
+                      onTap: () => context.read<SavedVehiclesProvider>().toggle(
+                        vehicle.id,
+                      ),
                       behavior: HitTestBehavior.opaque,
                       child: Padding(
                         padding: const EdgeInsets.all(6),

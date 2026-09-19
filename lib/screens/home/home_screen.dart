@@ -117,6 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
         current: AppNavTab.home,
         onTap: (tab) {
           if (tab == AppNavTab.home) return;
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
           _comingSoon('The ${tab.name} tab');
         },
       ),
@@ -179,10 +183,7 @@ class _NotificationsSheet extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 n.$2,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.inkSoft,
-                ),
+                style: const TextStyle(fontSize: 13, color: AppColors.inkSoft),
               ),
               const SizedBox(height: 16),
             ],

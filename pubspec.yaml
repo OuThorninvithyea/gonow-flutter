@@ -68,6 +68,7 @@ flutter:
     - assets/images/onboarding/
     - assets/images/social/
     - assets/images/home/
+    - assets/images/map/
     - assets/icons/
     - assets/animations/
 

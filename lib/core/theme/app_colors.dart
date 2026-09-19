@@ -130,6 +130,15 @@ class AppColors {
   /// Checkmark glyph color on the lime "payment successful" badge.
   static const successCheckDark = Color(0xFF203026);
 
+  // --- Map screen (Figma "iPhone 16 Plus - 13": static Mapsicle image,
+  // no live map SDK) -------------------------------------------------------
+
+  /// Text on the lime "Available" badge over a vehicle card on the map.
+  static const mapAvailableText = Color(0xFF395100);
+
+  /// "Phnom Penh" location label in the map header, over the dark scrim.
+  static const mapLocationLabel = Color(0xFFD8D8D8);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

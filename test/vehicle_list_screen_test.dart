@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gonow/providers/saved_vehicles_provider.dart';
+import 'package:gonow/screens/home/map_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
 
 late SavedVehiclesProvider saved;
@@ -13,14 +14,12 @@ Widget _wrap() {
   final router = GoRouter(
     initialLocation: '/vehicles',
     routes: [
-      GoRoute(
-        path: '/vehicles',
-        builder: (_, _) => const VehicleListScreen(),
-      ),
+      GoRoute(path: '/vehicles', builder: (_, _) => const VehicleListScreen()),
       GoRoute(
         path: '/home',
         builder: (_, _) => const Scaffold(body: Text('home screen')),
       ),
+      GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
     ],
   );
   return ChangeNotifierProvider.value(
@@ -93,5 +92,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('home screen'), findsOneWidget);
+  });
+
+  testWidgets('Map view opens the map screen', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Map view'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Search pickup location'), findsOneWidget);
   });
 }

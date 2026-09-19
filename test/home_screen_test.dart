@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:gonow/providers/auth_provider.dart';
 import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/home_screen.dart';
+import 'package:gonow/screens/home/map_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
 import 'package:gonow/widgets/app_bottom_nav.dart';
 
@@ -17,10 +18,8 @@ Widget _wrap() {
     initialLocation: '/home',
     routes: [
       GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-      GoRoute(
-        path: '/vehicles',
-        builder: (_, _) => const VehicleListScreen(),
-      ),
+      GoRoute(path: '/vehicles', builder: (_, _) => const VehicleListScreen()),
+      GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
     ],
   );
   return MultiProvider(
@@ -94,9 +93,7 @@ void main() {
     expect(find.text('Fortuner GR'), findsNothing);
   });
 
-  testWidgets('tapping the vehicle card opens the rent sheet', (
-    tester,
-  ) async {
+  testWidgets('tapping the vehicle card opens the rent sheet', (tester) async {
     await tester.pumpWidget(_wrap());
     await _settle(tester);
 
@@ -153,9 +150,7 @@ void main() {
     expect(find.text('Notifications'), findsOneWidget);
   });
 
-  testWidgets('View more navigates to the full vehicle list', (
-    tester,
-  ) async {
+  testWidgets('View more navigates to the full vehicle list', (tester) async {
     await tester.pumpWidget(_wrap());
     await _settle(tester);
 
@@ -176,6 +171,16 @@ void main() {
     await tester.pump();
 
     expect(find.textContaining('coming soon'), findsOneWidget);
+  });
+
+  testWidgets('the Map tab opens the map screen', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await _settle(tester);
+
+    await tester.tap(find.text('Map'));
+    await _settle(tester);
+
+    expect(find.text('Search pickup location'), findsOneWidget);
   });
 
   testWidgets('the promo banner rotates to the next slide after 3 seconds', (

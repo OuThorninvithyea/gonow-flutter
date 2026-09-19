@@ -12,6 +12,7 @@ import '../../screens/auth/register_screen.dart';
 import '../../screens/auth/reset_new_password_screen.dart';
 import '../../screens/auth/reset_password_code_screen.dart';
 import '../../screens/home/home_screen.dart';
+import '../../screens/home/map_screen.dart';
 import '../../screens/home/vehicle_list_screen.dart';
 import '../../screens/onboarding/onboarding_screen.dart';
 import '../../screens/splash/splash_screen.dart';
@@ -46,6 +47,7 @@ final appRouter = GoRouter(
       builder: (context, state) => const ResetNewPasswordScreen(),
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
     GoRoute(
       path: '/vehicles',
       builder: (context, state) => const VehicleListScreen(),
