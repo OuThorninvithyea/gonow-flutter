@@ -38,6 +38,23 @@ Widget _wrap() {
 }
 
 void main() {
+  testWidgets('uses one pinned custom header while content scrolls', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.pinned, isTrue);
+    expect(find.text('Profile'), findsNothing);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rider'), findsOneWidget);
+    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+  });
+
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
     testWidgets('renders without overflow at $size', (tester) async {
       tester.view.physicalSize = size;
@@ -111,7 +128,7 @@ void main() {
     expect(find.text('Cash'), findsOneWidget);
     expect(
       find.descendant(
-        of: find.byType(SingleChildScrollView),
+        of: find.byType(CustomScrollView),
         matching: find.text('Home'),
       ),
       findsOneWidget,
@@ -119,7 +136,7 @@ void main() {
     expect(find.text('Work'), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('EMERGENCY CONTACT'),
-      find.byType(SingleChildScrollView),
+      find.byType(CustomScrollView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();
@@ -134,7 +151,7 @@ void main() {
     expect(find.text('Promotions'), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('Promotions'),
-      find.byType(SingleChildScrollView),
+      find.byType(CustomScrollView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();

@@ -18,6 +18,23 @@ Widget _wrap() {
 }
 
 void main() {
+  testWidgets('pins the only rental history header while records scroll', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.pinned, isTrue);
+    expect(find.text('Rental history'), findsOneWidget);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rental history'), findsOneWidget);
+    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+  });
+
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
     testWidgets('renders without overflow at $size', (tester) async {
       tester.view.physicalSize = size;

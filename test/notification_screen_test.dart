@@ -21,6 +21,23 @@ Widget _wrap() {
 }
 
 void main() {
+  testWidgets('pins the only notification header while the feed scrolls', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
+    expect(appBar.pinned, isTrue);
+    expect(find.text('Notification'), findsOneWidget);
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Notification'), findsOneWidget);
+    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+  });
+
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
     testWidgets('renders without overflow at $size', (tester) async {
       tester.view.physicalSize = size;
@@ -40,7 +57,7 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
-    expect(find.text('Notification'), findsWidgets);
+    expect(find.text('Notification'), findsOneWidget);
     expect(find.text('Stay up to date with your rides.'), findsOneWidget);
     expect(find.text('6 new'), findsOneWidget);
 
@@ -57,7 +74,7 @@ void main() {
     // view.
     await tester.dragUntilVisible(
       find.text('Ride completed'),
-      find.byType(ListView),
+      find.byType(CustomScrollView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();
@@ -84,7 +101,7 @@ void main() {
     // The feed itself doesn't actually filter yet.
     await tester.dragUntilVisible(
       find.text('Ride completed'),
-      find.byType(ListView),
+      find.byType(CustomScrollView),
       const Offset(0, -200),
     );
     expect(find.text('Ride completed'), findsOneWidget);
