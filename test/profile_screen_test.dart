@@ -17,10 +17,7 @@ Widget _wrap() {
     initialLocation: '/profile',
     routes: [
       GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
-      GoRoute(
-        path: '/rentals',
-        builder: (_, _) => const RentalHistoryScreen(),
-      ),
+      GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
       GoRoute(
         path: '/home',
         builder: (_, _) => const Scaffold(body: Text('home screen')),
@@ -46,13 +43,24 @@ void main() {
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
     expect(appBar.pinned, isTrue);
-    expect(find.text('Profile'), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byType(SliverAppBar),
+        matching: find.text('Profile'),
+      ),
+      findsNothing,
+    );
 
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
     await tester.pumpAndSettle();
 
     expect(find.text('Rider'), findsOneWidget);
-    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.label == 'Back',
+      ),
+      findsOneWidget,
+    );
   });
 
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
@@ -78,9 +86,7 @@ void main() {
     expect(find.text('R'), findsOneWidget, reason: 'avatar initial');
   });
 
-  testWidgets("shows the signed-in user's name and initials", (
-    tester,
-  ) async {
+  testWidgets("shows the signed-in user's name and initials", (tester) async {
     auth = AuthProvider();
     final router = GoRouter(
       initialLocation: '/profile',

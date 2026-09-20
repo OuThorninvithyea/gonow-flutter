@@ -35,7 +35,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Notification'), findsOneWidget);
-    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.label == 'Back',
+      ),
+      findsOneWidget,
+    );
   });
 
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
@@ -70,8 +75,11 @@ void main() {
       expect(find.text(title), findsOneWidget, reason: 'missing: $title');
     }
 
-    // The list is a ListView, so later items only exist once scrolled into
-    // view.
+    for (final filter in ['All', 'Unread', 'Rides']) {
+      expect(find.text(filter), findsOneWidget, reason: 'missing: $filter');
+    }
+
+    // Later feed items only exist once the custom scroll view reaches them.
     await tester.dragUntilVisible(
       find.text('Ride completed'),
       find.byType(CustomScrollView),
@@ -81,10 +89,6 @@ void main() {
 
     for (final title in ['Maintenance notice', 'Ride completed']) {
       expect(find.text(title), findsOneWidget, reason: 'missing: $title');
-    }
-
-    for (final filter in ['All', 'Unread', 'Rides']) {
-      expect(find.text(filter), findsOneWidget, reason: 'missing: $filter');
     }
   });
 

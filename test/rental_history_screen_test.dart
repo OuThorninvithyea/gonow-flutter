@@ -32,7 +32,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Rental history'), findsOneWidget);
-    expect(find.bySemanticsLabel('Back'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.label == 'Back',
+      ),
+      findsOneWidget,
+    );
   });
 
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {

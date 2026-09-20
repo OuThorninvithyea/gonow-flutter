@@ -54,29 +54,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            primary: false,
+            automaticallyImplyLeading: false,
+            toolbarHeight: 216,
+            collapsedHeight: 216,
+            backgroundColor: AppColors.ink,
+            surfaceTintColor: Colors.transparent,
+            flexibleSpace: _Header(
+              name: name,
+              email: email,
+              initials: initials,
+              onBack: () =>
+                  context.canPop() ? context.pop() : context.go('/home'),
+            ),
           ),
-        ),
-      ),
-      body: Column(
-        children: [
-          _Header(
-            name: name,
-            email: email,
-            initials: initials,
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,9 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (ridesThisMonth.isEmpty)
                     const _EmptyRow(text: 'No rides yet this month.')
                   else
-                    _RentalHistoryPreviewCard(
-                      rides: ridesThisMonth.toList(),
-                    ),
+                    _RentalHistoryPreviewCard(rides: ridesThisMonth.toList()),
                   const SizedBox(height: 24),
                   _SectionHeader(
                     label: 'Saved locations',
@@ -125,8 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         setState(() => _bookingConfirmations = v),
                     onReturnRemindersChanged: (v) =>
                         setState(() => _returnReminders = v),
-                    onPromotionsChanged: (v) =>
-                        setState(() => _promotions = v),
+                    onPromotionsChanged: (v) => setState(() => _promotions = v),
                   ),
                   const SizedBox(height: 24),
                   const _SectionLabel('Emergency contact'),
@@ -654,10 +648,7 @@ class _RentalHistoryPreviewCard extends StatelessWidget {
             if (i > 0)
               const Divider(height: 0.75, color: AppColors.receiptDivider),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 19,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 19),
               child: Row(
                 children: [
                   Expanded(
@@ -666,7 +657,8 @@ class _RentalHistoryPreviewCard extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${shown[i].start.day} '
+                            text:
+                                '${shown[i].start.day} '
                                 '${_month(shown[i].start.month)}',
                             style: const TextStyle(
                               fontSize: 14,

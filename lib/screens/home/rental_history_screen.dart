@@ -69,26 +69,23 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Rental History',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            primary: false,
+            automaticallyImplyLeading: false,
+            toolbarHeight: 217,
+            collapsedHeight: 217,
+            backgroundColor: AppColors.ink,
+            surfaceTintColor: Colors.transparent,
+            flexibleSpace: _Header(
+              onBack: () =>
+                  context.canPop() ? context.pop() : context.go('/home'),
+            ),
           ),
-        ),
-      ),
-      body: Column(
-        children: [
-          _Header(
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+          SliverToBoxAdapter(
+            child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

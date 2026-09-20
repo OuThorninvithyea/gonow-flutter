@@ -97,41 +97,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
     // ignored, but the list underneath doesn't change.
     setState(() => _filterIndex = index);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${_filters[index]} filtering is coming soon.',
-        ),
-      ),
+      SnackBar(content: Text('${_filters[index]} filtering is coming soon.')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final headerHeight = MediaQuery.sizeOf(context).width <= 320
+        ? 256.0
+        : 236.0;
+
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Notification',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            primary: false,
+            automaticallyImplyLeading: false,
+            toolbarHeight: headerHeight,
+            collapsedHeight: headerHeight,
+            backgroundColor: AppColors.ink,
+            surfaceTintColor: Colors.transparent,
+            flexibleSpace: _Header(
+              onBack: () =>
+                  context.canPop() ? context.pop() : context.go('/home'),
+              count: _notifications.length,
+            ),
           ),
-        ),
-      ),
-      body: Column(
-        children: [
-          _Header(
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-            count: _notifications.length,
+          SliverToBoxAdapter(
+            child: _FilterBar(
+              selected: _filterIndex,
+              onSelected: _selectFilter,
+            ),
           ),
-          _FilterBar(selected: _filterIndex, onSelected: _selectFilter),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(17, 16, 17, 24),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(17, 16, 17, 24),
+            sliver: SliverList.separated(
               itemCount: _notifications.length,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) =>
@@ -330,9 +332,7 @@ class _NotificationCard extends StatelessWidget {
             height: 53,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: item.unread
-                  ? AppColors.primary
-                  : AppColors.ink,
+              color: item.unread ? AppColors.primary : AppColors.ink,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Text(item.emoji, style: const TextStyle(fontSize: 18)),
