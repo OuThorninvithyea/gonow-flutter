@@ -55,7 +55,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     final phone = context.watch<AuthProvider>().pendingPhone ?? 'your phone';
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Verify OTP',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),

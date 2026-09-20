@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:gonow/providers/auth_provider.dart';
 import 'package:gonow/screens/auth/login_screen.dart';
 
-Widget _wrap() => ChangeNotifierProvider(
-  create: (_) => AuthProvider(),
-  child: const MaterialApp(home: LoginScreen()),
-);
+/// A real router, so `context.push('/forgot-password')` is exercised rather
+/// than throwing "No GoRouter found in context".
+Widget _wrap() {
+  final router = GoRouter(
+    initialLocation: '/login',
+    routes: [
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (_, _) => const Scaffold(body: Text('forgot password screen')),
+      ),
+    ],
+  );
+  return ChangeNotifierProvider(
+    create: (_) => AuthProvider(),
+    child: MaterialApp.router(routerConfig: router),
+  );
+}
 
 void main() {
   testWidgets('renders the sign-in form without overflowing', (tester) async {
@@ -45,16 +60,14 @@ void main() {
     expect(find.text('Password must be at least 6 characters'), findsOneWidget);
   });
 
-  testWidgets('surfaces unimplemented providers instead of failing silently', (
-    tester,
-  ) async {
+  testWidgets('routes to the forgot-password flow', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Forgot Password ?'));
     await tester.tap(find.text('Forgot Password ?'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.textContaining('not wired up yet'), findsOneWidget);
+    expect(find.text('forgot password screen'), findsOneWidget);
   });
 }

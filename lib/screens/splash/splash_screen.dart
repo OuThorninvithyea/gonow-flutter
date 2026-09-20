@@ -29,6 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 0, // Hidden on splash — no title needed
+      ),
       body: Center(
         child: FractionallySizedBox(
           widthFactor: 336 / 430,
