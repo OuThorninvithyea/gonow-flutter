@@ -154,34 +154,25 @@ class AppColors {
 
   // --- Profile screen (Figma "ProfileScreen") -------------------------------
 
-  /// Screen background — warmer than the pure-white [surface] cards sit on.
-  static const profileCanvas = Color(0xFFF7F8F4);
-
   /// "Phone verified" pill fill on the dark header.
   static const profileVerifiedChipBg = Color(0x1FFFFFFF);
 
   /// "Phone verified" label text (lime-tinted, on the dark chip).
   static const profileVerifiedText = Color(0xFFE9F9BE);
 
-  /// Fallback avatar fill when no photo exists.
-  static const profileAvatarBg = Color(0xFFC7FF47);
-
   /// "ABA / KHQR" leading icon tile fill (brand blue, matches the KHQR mark).
   static const profilePaymentIconBg = Color(0xFF2870C8);
-
-  /// Cash payment method's leading icon tile fill.
-  static const profileCashIconBg = Color(0xFFEEF0EA);
 
   /// "Default" badge fill/text on the primary payment method row.
   static const profileDefaultBadgeBg = Color(0xFFE8F8BB);
   static const profileDefaultBadgeText = Color(0xFF4B6100);
 
-  /// Supporting text under a payment method / saved location row.
-  static const profileRowSubtext = Color(0xFF79817C);
+  /// Supporting text under a payment method / saved location row shares
+  /// [historyStatLabel]'s hex — reuse it rather than duplicate a token.
   static const profileRowSubtextMuted = Color(0xFF89908B);
 
-  /// Emergency-contact card fill and its body copy.
-  static const profileEmergencyCardBg = Color(0xFFE9ECE5);
+  /// Emergency-contact card fill shares [termsChipBg]'s hex — reuse it.
+  /// Its body copy gets its own token below (no existing match).
   static const profileEmergencyBody = Color(0xFF626B65);
 
   /// Trusted-contact input border.
@@ -190,27 +181,13 @@ class AppColors {
   /// "Log out" label — the one destructive-red text in the file.
   static const profileLogoutText = Color(0xFFA03131);
 
-  /// Toggle track fill when on/off (Figma's dark-fill / light-fill switch).
-  static const toggleOnTrack = Color(0xFF292D32);
-  static const toggleOffTrack = Color(0xFFD8DDD6);
-
   // --- Notification screen (Figma "iPhone 16 Plus - 26") -------------------
 
   /// Unread-dot color on a notification card.
   static const notificationUnreadDot = Color(0xFF719700);
 
-  /// Inactive filter chip fill/label on the dark header.
-  static const notificationChipInactiveBg = Color(0xFF3E4247);
-  static const notificationChipInactiveText = Color(0xFFC5C6C8);
-
   /// Active filter chip label — dark text on the lime fill.
   static const notificationChipActiveText = Color(0xFF1D2329);
-
-  /// Lime icon-tile fill for unread/actionable notifications.
-  static const notificationIconTileLime = Color(0xFFC7FF47);
-
-  /// Dark icon-tile fill for already-read notifications.
-  static const notificationIconTileRead = Color(0xFF292D32);
 
   // --- Navigation ----------------------------------------------------------
 

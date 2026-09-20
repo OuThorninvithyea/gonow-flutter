@@ -53,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.profileCanvas,
+      backgroundColor: AppColors.canvas,
       appBar: AppBar(
         backgroundColor: AppColors.ink,
         elevation: 0,
@@ -263,7 +263,7 @@ class _Header extends StatelessWidget {
                     height: 64,
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(
-                      color: AppColors.profileAvatarBg,
+                      color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
@@ -552,7 +552,7 @@ class _PaymentMethodsCard extends StatelessWidget {
                         'Primary payment method',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.profileRowSubtext,
+                          color: AppColors.historyStatLabel,
                         ),
                       ),
                     ],
@@ -589,7 +589,7 @@ class _PaymentMethodsCard extends StatelessWidget {
                   height: 36,
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(
-                    color: AppColors.profileCashIconBg,
+                    color: AppColors.surfaceTile,
                     shape: BoxShape.circle,
                   ),
                   child: const Text(
@@ -678,7 +678,7 @@ class _RentalHistoryPreviewCard extends StatelessWidget {
                             text: '   ${shown[i].durationMinutes} min',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: AppColors.profileRowSubtext,
+                              color: AppColors.historyStatLabel,
                             ),
                           ),
                         ],
@@ -768,7 +768,7 @@ class _LocationRow extends StatelessWidget {
                   address,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.profileRowSubtext,
+                    color: AppColors.historyStatLabel,
                   ),
                 ),
               ],
@@ -777,7 +777,7 @@ class _LocationRow extends StatelessWidget {
           const Icon(
             Icons.arrow_forward_ios,
             size: 14,
-            color: AppColors.profileRowSubtext,
+            color: AppColors.historyStatLabel,
           ),
         ],
       ),
@@ -875,7 +875,7 @@ class _ToggleRow extends StatelessWidget {
                   subtitle,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.profileRowSubtext,
+                    color: AppColors.historyStatLabel,
                   ),
                 ),
               ],
@@ -887,9 +887,9 @@ class _ToggleRow extends StatelessWidget {
             child: Switch(
               value: value,
               onChanged: onChanged,
-              activeTrackColor: AppColors.toggleOnTrack,
+              activeTrackColor: AppColors.ink,
               activeThumbColor: AppColors.surface,
-              inactiveTrackColor: AppColors.toggleOffTrack,
+              inactiveTrackColor: AppColors.receiptCardBorder,
               inactiveThumbColor: AppColors.surface,
               trackOutlineColor: const WidgetStatePropertyAll(
                 Colors.transparent,
@@ -926,7 +926,7 @@ class _EmergencyContactCardState extends State<_EmergencyContactCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.profileEmergencyCardBg,
+        color: AppColors.termsChipBg,
         borderRadius: BorderRadius.circular(30),
       ),
       child: Column(
@@ -1032,7 +1032,7 @@ class _AccountSupportCard extends StatelessWidget {
                                 rows[i].$2!,
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.profileRowSubtext,
+                                  color: AppColors.historyStatLabel,
                                 ),
                               ),
                             ],
@@ -1042,7 +1042,7 @@ class _AccountSupportCard extends StatelessWidget {
                       const Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
-                        color: AppColors.profileRowSubtext,
+                        color: AppColors.historyStatLabel,
                       ),
                     ],
                   ),

@@ -274,7 +274,7 @@ class _FilterBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: i == selected
                         ? AppColors.primary
-                        : AppColors.notificationChipInactiveBg,
+                        : AppColors.inkSurfaceAlt,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
@@ -284,7 +284,7 @@ class _FilterBar extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       color: i == selected
                           ? AppColors.notificationChipActiveText
-                          : AppColors.notificationChipInactiveText,
+                          : AppColors.onDarkChip,
                     ),
                   ),
                 ),
@@ -331,8 +331,8 @@ class _NotificationCard extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: item.unread
-                  ? AppColors.notificationIconTileLime
-                  : AppColors.notificationIconTileRead,
+                  ? AppColors.primary
+                  : AppColors.ink,
               borderRadius: BorderRadius.circular(30),
             ),
             child: Text(item.emoji, style: const TextStyle(fontSize: 18)),
@@ -373,7 +373,7 @@ class _NotificationCard extends StatelessWidget {
                   item.body,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: AppColors.profileRowSubtext,
+                    color: AppColors.historyStatLabel,
                   ),
                 ),
                 const SizedBox(height: 6),
