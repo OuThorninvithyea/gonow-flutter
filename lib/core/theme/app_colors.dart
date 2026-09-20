@@ -130,6 +130,11 @@ class AppColors {
   /// Checkmark glyph color on the lime "payment successful" badge.
   static const successCheckDark = Color(0xFF203026);
 
+  /// Checkmark glyph color on the pale-lime "payment received" badge on the
+  /// booking-receipt screen. One hex step off [successCheckDark] in the
+  /// Figma file (different badge fill), so kept as its own token.
+  static const receiptCheckGreen = Color(0xFF476000);
+
   // --- Map screen (Figma "iPhone 16 Plus - 13": static Mapsicle image,
   // no live map SDK) -------------------------------------------------------
 

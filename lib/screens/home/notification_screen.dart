@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../widgets/app_bottom_nav.dart';
 
 /// "Notification" — Figma "iPhone 16 Plus - 26" (node 748:651), reached
 /// from the home screen's bell icon.
@@ -12,6 +13,12 @@ import '../../core/theme/app_colors.dart';
 /// ride-vs-other split cleanly enough to make "Unread"/"Rides" do anything
 /// but no-op, so tapping them keeps the same "coming soon" convention used
 /// elsewhere in the app for filters that aren't real yet.
+///
+/// The Figma frame itself has no bottom tab bar, but every other screen
+/// reachable from the tab flow keeps one for consistent navigation (see
+/// [VehicleListScreen], reached from "View more" the same way this is
+/// reached from the bell) — this uses [AppNavTab.home] since the bell lives
+/// on the home header.
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
@@ -123,6 +130,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: AppBottomNav(
+        current: AppNavTab.home,
+        onTap: (tab) {
+          if (tab == AppNavTab.home) {
+            context.canPop() ? context.pop() : context.go('/home');
+            return;
+          }
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
+          if (tab == AppNavTab.rentals) {
+            context.push('/rentals');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
+        },
       ),
     );
   }
