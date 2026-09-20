@@ -69,6 +69,18 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      appBar: AppBar(
+        backgroundColor: AppColors.ink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Rental History',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AppColors.onDark,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           _Header(

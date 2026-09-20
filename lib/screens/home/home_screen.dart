@@ -52,6 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Home',
+          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.ink),
+        ),
+      ),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(

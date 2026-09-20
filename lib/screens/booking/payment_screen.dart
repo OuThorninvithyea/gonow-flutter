@@ -56,6 +56,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
       canPop: _succeeded,
       child: Scaffold(
         backgroundColor: AppColors.canvas,
+        appBar: AppBar(
+          backgroundColor: AppColors.canvas,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: const Text(
+            'Payment',
+            style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.ink),
+          ),
+        ),
         body: SafeArea(
           child: Center(
             child: Padding(
