@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gonow/screens/home/notification_screen.dart';
+import 'package:gonow/widgets/app_bottom_nav.dart';
 
 Widget _wrap() {
   final router = GoRouter(
@@ -65,12 +66,7 @@ void main() {
     expect(find.text('Stay up to date with your rides.'), findsOneWidget);
     expect(find.text('6 new'), findsOneWidget);
 
-    for (final title in [
-      'Ride Confirmed',
-      'Charge alert',
-      'New station nearby',
-      'Promo unlocked',
-    ]) {
+    for (final title in ['Ride Confirmed', 'Charge alert']) {
       expect(find.text(title), findsOneWidget, reason: 'missing: $title');
     }
 
@@ -78,15 +74,21 @@ void main() {
       expect(find.text(filter), findsOneWidget, reason: 'missing: $filter');
     }
 
-    // Later feed items only exist once the list scrolls to reach them.
-    await tester.dragUntilVisible(
-      find.text('Ride completed'),
-      find.byType(ListView),
-      const Offset(0, -200),
-    );
-    await tester.pumpAndSettle();
-
-    for (final title in ['Maintenance notice', 'Ride completed']) {
+    // Later feed items only exist once the list scrolls to reach them —
+    // the bottom nav bar takes up viewport space the Figma frame didn't
+    // account for, so even "New station nearby" (item 3) needs a scroll now.
+    for (final title in [
+      'New station nearby',
+      'Promo unlocked',
+      'Maintenance notice',
+      'Ride completed',
+    ]) {
+      await tester.dragUntilVisible(
+        find.text(title),
+        find.byType(ListView),
+        const Offset(0, -200),
+      );
+      await tester.pumpAndSettle();
       expect(find.text(title), findsOneWidget, reason: 'missing: $title');
     }
   });
@@ -115,6 +117,24 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('←'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('home screen'), findsOneWidget);
+  });
+
+  testWidgets('has a bottom nav bar and the Home tab also returns home', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppBottomNav), findsOneWidget);
+
+    await tester.tap(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.label == 'Home',
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('home screen'), findsOneWidget);
