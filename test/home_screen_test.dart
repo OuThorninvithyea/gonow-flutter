@@ -7,6 +7,7 @@ import 'package:gonow/providers/auth_provider.dart';
 import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/home_screen.dart';
 import 'package:gonow/screens/home/map_screen.dart';
+import 'package:gonow/screens/home/rental_history_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
 import 'package:gonow/widgets/app_bottom_nav.dart';
 
@@ -20,6 +21,7 @@ Widget _wrap() {
       GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
       GoRoute(path: '/vehicles', builder: (_, _) => const VehicleListScreen()),
       GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
+      GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
     ],
   );
   return MultiProvider(
@@ -167,7 +169,7 @@ void main() {
     await tester.pumpWidget(_wrap());
     await _settle(tester);
 
-    await tester.tap(find.text('Rentals'));
+    await tester.tap(find.text('Saved'));
     await tester.pump();
 
     expect(find.textContaining('coming soon'), findsOneWidget);
@@ -181,6 +183,16 @@ void main() {
     await _settle(tester);
 
     expect(find.text('Search pickup location'), findsOneWidget);
+  });
+
+  testWidgets('the Rentals tab opens rental history', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await _settle(tester);
+
+    await tester.tap(find.text('Rentals'));
+    await _settle(tester);
+
+    expect(find.text('Rental history'), findsOneWidget);
   });
 
   testWidgets('the promo banner rotates to the next slide after 3 seconds', (

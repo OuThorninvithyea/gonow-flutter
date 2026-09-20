@@ -139,6 +139,19 @@ class AppColors {
   /// "Phnom Penh" location label in the map header, over the dark scrim.
   static const mapLocationLabel = Color(0xFFD8D8D8);
 
+  // --- Rental history (Figma "RentalHistoryScreen") -----------------------
+
+  /// "This month" / "Total spent" stat captions and each ride row's
+  /// date · time · duration line.
+  static const historyStatLabel = Color(0xFF79817C);
+
+  /// "RECENT RENTALS" section eyebrow — one shade darker than
+  /// [planLabel], which the summary card's month label uses instead.
+  static const historySectionLabel = Color(0xFF7C847F);
+
+  /// "Receipt" link on each ride row.
+  static const historyReceiptLink = Color(0xFF587300);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

@@ -121,6 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
             context.push('/map');
             return;
           }
+          if (tab == AppNavTab.rentals) {
+            context.push('/rentals');
+            return;
+          }
           _comingSoon('The ${tab.name} tab');
         },
       ),

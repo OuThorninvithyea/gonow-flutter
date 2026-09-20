@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gonow/models/vehicle_listing.dart';
 import 'package:gonow/screens/home/map_screen.dart';
+import 'package:gonow/screens/home/rental_history_screen.dart';
 
 Widget _wrap({VehicleListing? vehicle}) {
   final router = GoRouter(
@@ -16,6 +17,7 @@ Widget _wrap({VehicleListing? vehicle}) {
         path: '/home',
         builder: (_, _) => const Scaffold(body: Text('home screen')),
       ),
+      GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
     ],
   );
   return MaterialApp.router(routerConfig: router);

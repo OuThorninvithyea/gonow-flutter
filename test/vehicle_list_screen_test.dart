@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/map_screen.dart';
+import 'package:gonow/screens/home/rental_history_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
 
 late SavedVehiclesProvider saved;
@@ -20,6 +21,7 @@ Widget _wrap() {
         builder: (_, _) => const Scaffold(body: Text('home screen')),
       ),
       GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
+      GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
     ],
   );
   return ChangeNotifierProvider.value(

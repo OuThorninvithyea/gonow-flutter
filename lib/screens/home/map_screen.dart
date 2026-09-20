@@ -120,6 +120,10 @@ class _MapScreenState extends State<MapScreen> {
             context.canPop() ? context.pop() : context.go('/home');
             return;
           }
+          if (tab == AppNavTab.rentals) {
+            context.push('/rentals');
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
           );
