@@ -130,6 +130,10 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
             context.push('/map');
             return;
           }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
           );
