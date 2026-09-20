@@ -134,6 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
             context.push('/profile');
             return;
           }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           _comingSoon('The ${tab.name} tab');
         },
       ),

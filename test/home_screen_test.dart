@@ -10,6 +10,7 @@ import 'package:gonow/screens/home/map_screen.dart';
 import 'package:gonow/screens/home/notification_screen.dart';
 import 'package:gonow/screens/home/profile_screen.dart';
 import 'package:gonow/screens/home/rental_history_screen.dart';
+import 'package:gonow/screens/home/saved_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
 import 'package:gonow/widgets/app_bottom_nav.dart';
 
@@ -24,6 +25,7 @@ Widget _wrap() {
       GoRoute(path: '/vehicles', builder: (_, _) => const VehicleListScreen()),
       GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
       GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
+      GoRoute(path: '/saved', builder: (_, _) => const SavedScreen()),
       GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
       GoRoute(
         path: '/notifications',
@@ -157,10 +159,7 @@ void main() {
     await _settle(tester);
 
     expect(find.byType(NotificationScreen), findsOneWidget);
-    expect(
-      find.text('Stay up to date with your rides.'),
-      findsOneWidget,
-    );
+    expect(find.text('Stay up to date with your rides.'), findsOneWidget);
   });
 
   testWidgets('View more navigates to the full vehicle list', (tester) async {
@@ -174,16 +173,15 @@ void main() {
     expect(find.text('Choose your ride.'), findsOneWidget);
   });
 
-  testWidgets('unbuilt nav tabs say so rather than doing nothing', (
-    tester,
-  ) async {
+  testWidgets('the Saved tab opens the saved screen', (tester) async {
     await tester.pumpWidget(_wrap());
     await _settle(tester);
 
     await tester.tap(find.text('Saved'));
-    await tester.pump();
+    await _settle(tester);
 
-    expect(find.textContaining('coming soon'), findsOneWidget);
+    expect(find.byType(SavedScreen), findsOneWidget);
+    expect(find.text('Saved scooters'), findsOneWidget);
   });
 
   testWidgets('the Map tab opens the map screen', (tester) async {

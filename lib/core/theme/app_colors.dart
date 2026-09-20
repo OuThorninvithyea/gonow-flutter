@@ -189,6 +189,11 @@ class AppColors {
   /// Active filter chip label — dark text on the lime fill.
   static const notificationChipActiveText = Color(0xFF1D2329);
 
+  // --- Saved screen (Figma "SavedScreen") -----------------------------------
+
+  /// Filled heart on a saved-vehicle card — tapping it unsaves the vehicle.
+  static const savedHeartFill = Color(0xFFD94141);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

@@ -128,6 +128,10 @@ class _MapScreenState extends State<MapScreen> {
             context.push('/profile');
             return;
           }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
           );

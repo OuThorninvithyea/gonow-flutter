@@ -173,6 +173,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             context.push('/rentals');
             return;
           }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
           );
