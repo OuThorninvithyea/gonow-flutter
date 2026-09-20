@@ -54,26 +54,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            primary: false,
-            automaticallyImplyLeading: false,
-            toolbarHeight: 216,
-            collapsedHeight: 216,
-            backgroundColor: AppColors.ink,
-            surfaceTintColor: Colors.transparent,
-            flexibleSpace: _Header(
-              name: name,
-              email: email,
-              initials: initials,
-              onBack: () =>
-                  context.canPop() ? context.pop() : context.go('/home'),
-            ),
+      body: Column(
+        children: [
+          _Header(
+            name: name,
+            email: email,
+            initials: initials,
+            onBack: () =>
+                context.canPop() ? context.pop() : context.go('/home'),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
+          Expanded(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

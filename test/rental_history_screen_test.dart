@@ -24,11 +24,13 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
-    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(appBar.pinned, isTrue);
+    expect(find.byType(AppBar), findsNothing);
     expect(find.text('Rental history'), findsOneWidget);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -400),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Rental history'), findsOneWidget);

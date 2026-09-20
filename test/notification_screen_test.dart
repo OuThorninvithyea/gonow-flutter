@@ -27,11 +27,10 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
-    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(appBar.pinned, isTrue);
+    expect(find.byType(AppBar), findsNothing);
     expect(find.text('Notification'), findsOneWidget);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+    await tester.drag(find.byType(ListView), const Offset(0, -300));
     await tester.pumpAndSettle();
 
     expect(find.text('Notification'), findsOneWidget);
@@ -79,10 +78,10 @@ void main() {
       expect(find.text(filter), findsOneWidget, reason: 'missing: $filter');
     }
 
-    // Later feed items only exist once the custom scroll view reaches them.
+    // Later feed items only exist once the list scrolls to reach them.
     await tester.dragUntilVisible(
       find.text('Ride completed'),
-      find.byType(CustomScrollView),
+      find.byType(ListView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();
@@ -105,7 +104,7 @@ void main() {
     // The feed itself doesn't actually filter yet.
     await tester.dragUntilVisible(
       find.text('Ride completed'),
-      find.byType(CustomScrollView),
+      find.byType(ListView),
       const Offset(0, -200),
     );
     expect(find.text('Ride completed'), findsOneWidget);

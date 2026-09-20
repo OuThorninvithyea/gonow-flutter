@@ -41,17 +41,16 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
-    final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    expect(appBar.pinned, isTrue);
-    expect(
-      find.descendant(
-        of: find.byType(SliverAppBar),
-        matching: find.text('Profile'),
-      ),
-      findsNothing,
-    );
+    // No separate Scaffold AppBar duplicating the custom dark header's title.
+    expect(find.byType(AppBar), findsNothing);
+    // The header isn't part of the scrollable content, so it stays fully
+    // visible (pinned) even after the body scrolls underneath it.
+    expect(find.text('Rider'), findsOneWidget);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -500),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Rider'), findsOneWidget);
@@ -134,7 +133,7 @@ void main() {
     expect(find.text('Cash'), findsOneWidget);
     expect(
       find.descendant(
-        of: find.byType(CustomScrollView),
+        of: find.byType(SingleChildScrollView),
         matching: find.text('Home'),
       ),
       findsOneWidget,
@@ -142,7 +141,7 @@ void main() {
     expect(find.text('Work'), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('EMERGENCY CONTACT'),
-      find.byType(CustomScrollView),
+      find.byType(SingleChildScrollView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();
@@ -157,7 +156,7 @@ void main() {
     expect(find.text('Promotions'), findsOneWidget);
     await tester.dragUntilVisible(
       find.text('Promotions'),
-      find.byType(CustomScrollView),
+      find.byType(SingleChildScrollView),
       const Offset(0, -200),
     );
     await tester.pumpAndSettle();
