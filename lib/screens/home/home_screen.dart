@@ -38,11 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showNotifications() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const _NotificationsSheet(),
-    );
+    context.push('/notifications');
   }
 
   @override
@@ -134,74 +130,16 @@ class _HomeScreenState extends State<HomeScreen> {
             context.push('/rentals');
             return;
           }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           _comingSoon('The ${tab.name} tab');
         },
-      ),
-    );
-  }
-}
-
-class _NotificationsSheet extends StatelessWidget {
-  const _NotificationsSheet();
-
-  static const _notifications = [
-    ('Booking confirmed', 'Your Fortuner GR is reserved for today.'),
-    ('Promotion', '20% off all scooters this week only.'),
-    ('Battery alert', 'Nearby scooters are fully charged and ready.'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(25, 12, 25, 25),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Notifications',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppColors.ink,
-              ),
-            ),
-            const SizedBox(height: 16),
-            for (final n in _notifications) ...[
-              Text(
-                n.$1,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.ink,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                n.$2,
-                style: const TextStyle(fontSize: 13, color: AppColors.inkSoft),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ],
-        ),
       ),
     );
   }

@@ -23,18 +23,6 @@ class BookingConfirmedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Booking Confirmed',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
-          ),
-        ),
-      ),
       body: Column(
         children: [
           const _Header(),

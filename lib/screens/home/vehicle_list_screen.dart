@@ -35,18 +35,6 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Available Vehicles',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
-          ),
-        ),
-      ),
       body: Column(
         children: [
           _Header(
@@ -88,6 +76,14 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           }
           if (tab == AppNavTab.rentals) {
             context.push('/rentals');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
             return;
           }
           ScaffoldMessenger.of(context).showSnackBar(

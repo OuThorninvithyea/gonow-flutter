@@ -79,18 +79,6 @@ class _MapScreenState extends State<MapScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.ink,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Map',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.onDark,
-          ),
-        ),
-      ),
       body: Stack(
         children: [
           const Positioned.fill(child: _MapBackground()),
@@ -134,6 +122,14 @@ class _MapScreenState extends State<MapScreen> {
           }
           if (tab == AppNavTab.rentals) {
             context.push('/rentals');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
             return;
           }
           ScaffoldMessenger.of(context).showSnackBar(

@@ -18,6 +18,30 @@ Widget _wrap() {
 }
 
 void main() {
+  testWidgets('pins the only rental history header while records scroll', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppBar), findsNothing);
+    expect(find.text('Rental history'), findsOneWidget);
+
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -400),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Rental history'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is Semantics && widget.properties.label == 'Back',
+      ),
+      findsOneWidget,
+    );
+  });
+
   for (final size in const [Size(360, 640), Size(431, 996), Size(320, 568)]) {
     testWidgets('renders without overflow at $size', (tester) async {
       tester.view.physicalSize = size;
