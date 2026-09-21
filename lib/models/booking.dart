@@ -1,13 +1,6 @@
 import '../models/rental_plan.dart';
 import '../models/vehicle_listing.dart';
 
-/// A confirmed-but-unpaid rental, handed from the rental-plan screen into
-/// the payment flow (Figma "payment-flow" section: Booking summary →
-/// Processing payment → Booking Confirmed).
-///
-/// Carries everything those screens need to render without recomputing the
-/// schedule from `DateTime.now()` again — the "Starts" / "Return by" times
-/// must stay pinned to what the rider actually picked.
 class Booking {
   const Booking({
     required this.vehicle,

@@ -1,7 +1,4 @@
-/// A rental duration option shown on the "Choose your rental plan." screen
-/// (Figma nodes 84:5795 / 84:5927 / 84:6120 — the three frames are the same
-/// screen with Daily / Weekly / Monthly selected, so they are modelled as one
-/// screen with three options).
+
 enum RentalPlan {
   daily(
     title: 'Daily',

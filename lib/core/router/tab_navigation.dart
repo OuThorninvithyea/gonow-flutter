@@ -20,28 +20,12 @@ const _edgeShadow = BoxDecoration(
 /// Route `extra` for a [goWithSlide] switch.
 class TabTransition {
   const TabTransition({required this.reverse, this.snapshot});
-
-  /// True when moving left along the nav bar (e.g. Profile → Saved, or any
-  /// tab → Home): the previous screen slides out to the right, uncovering
-  /// the new one. False: the new screen slides in from the right, over the
-  /// previous one.
   final bool reverse;
-
-  /// Picture of the screen being left. `go` removes that page outright, so
-  /// the new page draws this in its place for the transition.
   final ui.Image? snapshot;
 }
 
-/// Switches to [tab] from a screen whose nav bar highlights [from].
-///
-/// Tabs replace each other (`go`) rather than stacking up, and the
-/// animation follows the nav bar order — right of [from] slides in, left
-/// of it slides the current screen out. Going Home always slides out,
-/// since it's the root.
 void goToTab(BuildContext context, AppNavTab tab, {required AppNavTab from}) {
   final path = '/${tab.name}';
-  // Screens like Notifications highlight a tab they aren't the route for,
-  // so compare against the real location, not [from].
   if (GoRouterState.of(context).uri.path == path) return;
   goWithSlide(
     context,
@@ -50,9 +34,6 @@ void goToTab(BuildContext context, AppNavTab tab, {required AppNavTab from}) {
   );
 }
 
-/// `go`s to [path] — which must be built with [slidePage] — sliding in
-/// over the current screen, or with [reverse], sliding the current screen
-/// out to the right like a "back".
 void goWithSlide(BuildContext context, String path, {required bool reverse}) {
   context.go(
     path,

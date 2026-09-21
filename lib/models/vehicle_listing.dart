@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// One selectable paint color for a vehicle (Figma: the 3-variant
-/// "pngtree-modern-electric-scooter..." component — Default/Variant2/
-/// Variant3 map to Silver/Black/Red).
 class VehicleColorOption {
   const VehicleColorOption({
     required this.name,
@@ -14,10 +11,6 @@ class VehicleColorOption {
   final String name;
   final Color swatch;
   final String asset;
-
-  /// Whether this color can currently be rented. Unavailable colors are
-  /// still shown in the picker (so the rider knows the option exists) but
-  /// are disabled with a "Sold out" label.
   final bool available;
 }
 
@@ -42,15 +35,6 @@ const vehicleColorOptions = <VehicleColorOption>[
   ),
 ];
 
-/// A single rentable vehicle shown on the home feed and the full listing.
-///
-/// [filterTag] must match one of the labels in the home screen's filter
-/// chips (`Nearby`, `Battery 80%+`, `Daily`, `Weekly`) — selecting a chip
-/// swaps the featured vehicle to the one tagged with it.
-///
-/// [category], [distanceKm] and [batteryPercent] back the "Choose your
-/// ride" browse screen (Figma: "iPhone 16 Plus - 14"), which filters by
-/// category and shows live distance/charge per vehicle.
 class VehicleListing {
   const VehicleListing({
     required this.id,
@@ -78,11 +62,6 @@ class VehicleListing {
   final String category;
   final double distanceKm;
   final int batteryPercent;
-
-  /// Short unit code shown on the booking-summary/confirmation receipts
-  /// (Figma "total-recipt" / "comfirm-booking": "GN-024"). Every mock
-  /// vehicle currently shares the same demo unit; give each its own once
-  /// there's a real fleet.
   final String code;
 
   /// Parking location shown on those same receipts.

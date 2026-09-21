@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import 'app_pill_field.dart';
 
-/// The rounded CTA button used across auth screens (login, register, and
-/// the forgot-password flow) — extracted once it showed up a third time.
-///
-/// Fills dark by default; once [isValid] flips true (the form is ready to
-/// submit) it switches to the lime brand color, per [AppColors.primary]'s
-/// contract of always pairing with [AppColors.onPrimary] text.
 class AppPrimaryButton extends StatelessWidget {
   const AppPrimaryButton({
     super.key,

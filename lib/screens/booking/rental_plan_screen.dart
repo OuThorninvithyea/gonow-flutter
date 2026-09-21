@@ -7,12 +7,6 @@ import '../../models/booking.dart';
 import '../../models/rental_plan.dart';
 import '../../models/vehicle_listing.dart';
 
-/// "Choose your rental plan." — Figma frames 84:5795 / 84:5927 / 84:6120.
-///
-/// The three Figma frames are one screen in three states (Daily / Weekly /
-/// Monthly selected), so this is a single stateful screen. Picking a plan
-/// also recomputes the "Return by" line, which is why the Figma states show
-/// "Tomorrow", "Next Monday" and "25 May" respectively.
 class RentalPlanScreen extends StatefulWidget {
   const RentalPlanScreen({super.key, required this.vehicle});
 

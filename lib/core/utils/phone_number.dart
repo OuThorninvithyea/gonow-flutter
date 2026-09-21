@@ -1,11 +1,6 @@
 import 'package:flutter/services.dart';
 
-/// Strips everything but digits — use this before sending a phone number
-/// anywhere, since the field displays it grouped as `0XX XXX XXX`.
 String phoneDigits(String input) => input.replaceAll(RegExp(r'[^0-9]'), '');
-
-/// Groups Cambodian mobile digits the way they are written locally:
-/// `012 345 678` for 9 digits, `012 345 6789` for the 10-digit ranges.
 String formatPhoneDigits(String digits) {
   if (digits.length <= 3) return digits;
   if (digits.length <= 6) {
@@ -16,8 +11,6 @@ String formatPhoneDigits(String digits) {
       '${digits.substring(6)}';
 }
 
-/// Validates a Cambodian mobile number: leading 0, then 9–10 digits total.
-/// Returns null when valid, otherwise the message to show under the field.
 String? validateCambodianPhone(String? value) {
   final digits = phoneDigits(value ?? '');
   if (digits.isEmpty) return 'Enter your phone number';
@@ -28,10 +21,6 @@ String? validateCambodianPhone(String? value) {
   return null;
 }
 
-/// Keeps a phone field digits-only and live-formats it as `0XX XXX XXX`.
-///
-/// Letters and symbols never make it into the field at all, so the validator
-/// only has to care about length and the leading zero.
 class CambodianPhoneFormatter extends TextInputFormatter {
   const CambodianPhoneFormatter();
 

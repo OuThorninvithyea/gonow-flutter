@@ -4,18 +4,6 @@ import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/app_bottom_nav.dart';
 
-/// "Notification" — Figma "iPhone 16 Plus - 26" (node 748:651), reached
-/// from the home screen's bell icon.
-///
-/// The Figma frame shows a fixed set of 6 notifications with three filter
-/// chips (All / Unread / Rides) above them. "All" is the only chip wired to
-/// real filtering — the underlying mock feed doesn't track read state or a
-/// ride-vs-other split cleanly enough to make "Unread"/"Rides" do anything
-/// but no-op, so tapping them keeps the same "coming soon" convention used
-/// elsewhere in the app for filters that aren't real yet.
-///
-/// The Figma frame itself has no bottom tab bar, but every other screen
-/// reachable from the tab flow keeps one for consistent navigation (see
 /// [VehicleListScreen], reached from "View more" the same way this is
 /// reached from the bell) — this uses [AppNavTab.home] since the bell lives
 /// on the home header.

@@ -36,19 +36,6 @@ class RentalRecord {
       '${DateFormat('h:mm a').format(start)} · $durationMinutes min';
 }
 
-/// Mock ride history — swap for a real API call once bookings are tracked
-/// server-side. Fixed dates rather than `DateTime.now()`-relative ones: this
-/// is demo data for a "past rides" screen, so it should read like real
-/// history regardless of when the app happens to run, the same way the mock
-/// fleet's battery/range numbers are fixed rather than live.
-///
-/// September's four rides total exactly $13.20 and August's two total
-/// $5.70 — the [RentalHistoryScreen] summary card sums whatever month is
-/// selected, so these numbers must stay in sync with the screen's mock
-/// summary expectations covered by tests.
-///
-/// Not `const`: each record references a [vehicleListings] entry by index,
-/// and list-index reads aren't constant expressions in Dart.
 final rentalHistory = <RentalRecord>[
   RentalRecord(
     id: 'ride-2026-09-18',

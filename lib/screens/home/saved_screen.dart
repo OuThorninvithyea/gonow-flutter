@@ -9,19 +9,8 @@ import '../../providers/saved_vehicles_provider.dart';
 import '../../widgets/app_bottom_nav.dart';
 import '../../widgets/vehicle_detail_sheet.dart';
 
-/// Filter chips above the saved list (Figma: "SavedScreen", node 589:315).
-/// Only "All" is wired to real filtering — "Nearby" and "Available" would
-/// need live distance/availability data the mock fleet doesn't track well
-/// enough to filter meaningfully, so they use the same "coming soon"
-/// no-op convention as the rest of the app's not-yet-real filters.
 const _filters = ['All', 'Nearby', 'Available'];
 
-/// "Saved" tab — Figma "SavedScreen" (node 589:315), reached from the
-/// bottom nav's "Saved" tab or the heart icon on any vehicle card.
-///
-/// Backed by [SavedVehiclesProvider], the same in-memory saved-id set the
-/// "Choose your ride" browse screen's heart toggle already writes to, so a
-/// save/unsave anywhere is reflected here immediately.
 class SavedScreen extends StatefulWidget {
   const SavedScreen({super.key});
 

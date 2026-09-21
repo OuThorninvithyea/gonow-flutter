@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../core/theme/app_colors.dart';
 import '../../models/booking.dart';
 
-/// "Payment receipt" — Figma "booking-receipt" frame (node 841:519), the
-/// full-page receipt reached by tapping "View Booking" on the Booking
-/// Confirmed screen.
-///
-/// Unlike [BookingConfirmedScreen] (a one-time celebratory terminal screen),
-/// this is meant to be re-opened any time the rider wants to review or
-/// "download" what they paid — so it stays on the navigation stack as a
-/// normal pushed screen rather than replacing it.
-///
-/// All figures come straight off [Booking] (rental price, service fee,
-/// total) — the Figma mock numbers ($5 rental + $1 fee = $6 total) are
-/// exactly what a [Booking] on [RentalPlan.daily] already computes, so
-/// nothing here is hardcoded.
 class BookingReceiptScreen extends StatelessWidget {
   const BookingReceiptScreen({super.key, required this.booking});
 
@@ -312,7 +298,10 @@ class _PaymentSummaryCard extends StatelessWidget {
           const SizedBox(height: 16),
           const Divider(height: 0.75, color: AppColors.receiptDivider),
           const SizedBox(height: 16),
-          _PriceRow(label: 'Rental charge', value: booking.formattedRentalPrice),
+          _PriceRow(
+            label: 'Rental charge',
+            value: booking.formattedRentalPrice,
+          ),
           const SizedBox(height: 12),
           _PriceRow(label: 'Service fee', value: booking.formattedServiceFee),
           const SizedBox(height: 12),

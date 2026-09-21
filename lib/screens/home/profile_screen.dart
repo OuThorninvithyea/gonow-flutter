@@ -11,16 +11,6 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/app_bottom_nav.dart';
 import '../../widgets/app_pill_field.dart';
 
-/// "Profile" — Figma `ProfileScreen` (node 592:906), reached from the
-/// bottom nav's "Profile" tab.
-///
-/// The Figma frame is entirely static demo data (Sokha Chan, ABA / KHQR,
-/// two saved locations, three notification toggles). This wires it to real
-/// app state where that state already exists (name/email from
-/// [AuthProvider], plan from [RentalPlan.daily], month total from
-/// [rentalHistory]) and keeps the rest as sensible mock content the same
-/// way the rest of the app's "settings-style" rows do — everything is a
-/// real button, nothing is a dead tap.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

@@ -8,9 +8,6 @@ class AuthProvider extends ChangeNotifier {
   AppUser? _user;
   String? _pendingPhone;
 
-  // Forgot-password flow. Independent of `_user` since the person is not
-  // signed in while resetting — an email/phone identifier and a "did the
-  // code check out" flag are all the next two screens need.
   String? _resetIdentifier;
   bool _resetCodeVerified = false;
 

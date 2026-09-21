@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 
-/// Plain ink arrow used to step back through a pushed flow (e.g. the
-/// forgot-password screens, which use `context.push` precisely so this has
-/// somewhere to pop to).
 class AppBackArrow extends StatelessWidget {
   const AppBackArrow({super.key, required this.onTap});
 
