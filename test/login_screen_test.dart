@@ -17,6 +17,10 @@ Widget _wrap() {
         path: '/forgot-password',
         builder: (_, _) => const Scaffold(body: Text('forgot password screen')),
       ),
+      GoRoute(
+        path: '/home',
+        builder: (_, _) => const Scaffold(body: Text('home screen')),
+      ),
     ],
   );
   return ChangeNotifierProvider(
@@ -69,5 +73,38 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('forgot password screen'), findsOneWidget);
+  });
+
+  testWidgets('toggles password visibility', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    final passwordField = find.descendant(
+      of: find.byKey(const Key('login_show_password_button')),
+      matching: find.byType(Icon),
+    );
+    expect(
+      tester.widget<Icon>(passwordField).icon,
+      Icons.visibility_outlined,
+    );
+
+    await tester.tap(find.byKey(const Key('login_show_password_button')));
+    await tester.pump();
+
+    expect(
+      tester.widget<Icon>(passwordField).icon,
+      Icons.visibility_off_outlined,
+    );
+  });
+
+  testWidgets('continue as guest goes straight to home', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Continue as guest'));
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('home screen'), findsOneWidget);
   });
 }

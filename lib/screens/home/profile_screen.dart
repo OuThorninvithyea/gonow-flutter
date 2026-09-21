@@ -6,8 +6,10 @@ import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/rental_plan.dart';
 import '../../models/rental_record.dart';
+import '../../models/user.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_bottom_nav.dart';
+import '../../widgets/app_pill_field.dart';
 
 /// "Profile" — Figma `ProfileScreen` (node 592:906), reached from the
 /// bottom nav's "Profile" tab.
@@ -39,6 +41,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('$what is coming soon.')));
+  }
+
+  void _showEditProfileSheet(BuildContext context, AppUser? user) {
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sign in to edit your profile.')),
+      );
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => _EditProfileSheet(user: user),
+    );
   }
 
   @override
@@ -115,7 +132,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 24),
                   const _SectionLabel('Account & support'),
                   const SizedBox(height: 8),
-                  _AccountSupportCard(onTapRow: _comingSoon),
+                  _AccountSupportCard(
+                    onTapRow: _comingSoon,
+                    onEditProfile: () => _showEditProfileSheet(context, user),
+                  ),
                   const SizedBox(height: 24),
                   Center(
                     child: Semantics(
@@ -909,9 +929,10 @@ class _EmergencyContactCardState extends State<_EmergencyContactCard> {
 }
 
 class _AccountSupportCard extends StatelessWidget {
-  const _AccountSupportCard({required this.onTapRow});
+  const _AccountSupportCard({required this.onTapRow, required this.onEditProfile});
 
   final ValueChanged<String> onTapRow;
+  final VoidCallback onEditProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -939,7 +960,10 @@ class _AccountSupportCard extends StatelessWidget {
               button: true,
               label: rows[i].$1,
               child: GestureDetector(
-                onTap: () => onTapRow(rows[i].$1),
+                onTap: () =>
+                    rows[i].$1 == 'Edit name, email & phone'
+                        ? onEditProfile()
+                        : onTapRow(rows[i].$1),
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -1006,6 +1030,132 @@ class _EmptyRow extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: Text(text, style: const TextStyle(color: AppColors.inkSoft)),
+    );
+  }
+}
+
+/// "Edit name, email & phone" sheet — the one Account & support row that's
+/// wired to a real action rather than "coming soon", since [AuthProvider]
+/// already models these three fields for every signed-in user.
+class _EditProfileSheet extends StatefulWidget {
+  const _EditProfileSheet({required this.user});
+
+  final AppUser user;
+
+  @override
+  State<_EditProfileSheet> createState() => _EditProfileSheetState();
+}
+
+class _EditProfileSheetState extends State<_EditProfileSheet> {
+  late final TextEditingController _name = TextEditingController(
+    text: widget.user.fullName,
+  );
+  late final TextEditingController _phone = TextEditingController(
+    text: widget.user.phone,
+  );
+  late final TextEditingController _email = TextEditingController(
+    text: widget.user.email ?? '',
+  );
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _phone.dispose();
+    _email.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    context.read<AuthProvider>().updateProfile(
+      fullName: _name.text.trim(),
+      phone: _phone.text.trim(),
+      email: _email.text.trim(),
+    );
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Edit profile',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
+                ),
+              ),
+              const SizedBox(height: 16),
+              AppPillField(
+                key: const Key('profile_edit_name_field'),
+                controller: _name,
+                hint: 'Full name',
+              ),
+              const SizedBox(height: 12),
+              AppPillField(
+                key: const Key('profile_edit_phone_field'),
+                controller: _phone,
+                hint: 'Phone',
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 12),
+              AppPillField(
+                key: const Key('profile_edit_email_field'),
+                controller: _email,
+                hint: 'Email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: AppPillField.height,
+                child: ElevatedButton(
+                  key: const Key('profile_save_button'),
+                  onPressed: _save,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.onPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    'Save changes',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

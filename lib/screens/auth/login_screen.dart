@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _loading = false;
   bool _isValid = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -134,10 +135,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 AppPillField(
                   controller: _passwordController,
                   hint: 'Password',
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _submit(),
                   validator: _validatePassword,
+                  suffixIcon: IconButton(
+                    key: const Key('login_show_password_button'),
+                    tooltip: _obscurePassword
+                        ? 'Show password'
+                        : 'Hide password',
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.inkSoft,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Align(
@@ -165,7 +180,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   isValid: _isValid,
                   onPressed: _submit,
                 ),
-                const SizedBox(height: 23),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    key: const Key('login_continue_guest_button'),
+                    onPressed: () => context.go('/home'),
+                    style: TextButton.styleFrom(foregroundColor: AppColors.ink),
+                    child: const Text(
+                      'Continue as guest',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 7),
                 const _OrDivider(),
                 const SizedBox(height: 19),
                 _SocialRow(onTap: _notImplemented),

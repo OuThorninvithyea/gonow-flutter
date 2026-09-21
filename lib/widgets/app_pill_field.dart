@@ -19,6 +19,7 @@ class AppPillField extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.textAlign = TextAlign.start,
+    this.suffixIcon,
   });
 
   static const double height = 58.289;
@@ -33,6 +34,9 @@ class AppPillField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
   final TextAlign textAlign;
+
+  /// Optional trailing widget, e.g. the show/hide-password toggle.
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +64,7 @@ class AppPillField extends StatelessWidget {
           color: AppColors.textPlaceholder,
         ),
         filled: false,
+        suffixIcon: suffixIcon,
         counterText: maxLength != null ? '' : null,
         // Vertical padding is what produces the 58.29pt height alongside the
         // 16pt text; a fixed SizedBox would clip the validation message.
