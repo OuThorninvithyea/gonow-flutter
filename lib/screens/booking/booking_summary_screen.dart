@@ -38,6 +38,18 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      appBar: AppBar(
+        backgroundColor: AppColors.ink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Booking Summary',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AppColors.onDark,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           _Header(onBack: () => Navigator.of(context).maybePop()),

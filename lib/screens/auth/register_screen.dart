@@ -1,14 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/phone_number.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/app_pill_field.dart';
-import '../../widgets/app_primary_button.dart';
 
+/// Create Account. Redesigned to match the Home screen's visual language
+/// while keeping the existing sign-up fields (name, business name, phone,
+/// email, password, confirmation) so the local OTP flow keeps working.
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -18,7 +19,8 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _businessNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
@@ -27,12 +29,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _loading = false;
   bool _isValid = false;
   bool _termsAccepted = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
 
   @override
   void initState() {
     super.initState();
     for (final controller in [
-      _nameController,
+      _firstNameController,
+      _lastNameController,
       _businessNameController,
       _phoneController,
       _emailController,
@@ -45,7 +50,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _businessNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
@@ -58,14 +64,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
 
+    final fullName =
+        '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'
+            .trim();
     final businessName = _businessNameController.text.trim();
     await context.read<AuthProvider>().register(
-      fullName: _nameController.text.trim(),
-      phone: phoneDigits(_phoneController.text),
-      password: _passwordController.text,
-      email: _emailController.text.trim(),
-      businessName: businessName.isEmpty ? null : businessName,
-    );
+          fullName: fullName,
+          phone: phoneDigits(_phoneController.text),
+          password: _passwordController.text,
+          email: _emailController.text.trim(),
+          businessName: businessName.isEmpty ? null : businessName,
+        );
 
     if (!mounted) return;
     setState(() => _loading = false);
@@ -78,8 +87,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ).showSnackBar(SnackBar(content: Text('$what is not wired up yet.')));
   }
 
-  String? _validateName(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Enter your name' : null;
+  String? _validateName(String? v, String field) =>
+      (v == null || v.trim().isEmpty) ? 'Enter your $field' : null;
 
   String? _validateEmail(String? v) {
     final value = v?.trim() ?? '';
@@ -121,7 +130,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _recomputeValidity() {
     final valid =
-        _validateName(_nameController.text) == null &&
+        _validateName(_firstNameController.text, 'first name') == null &&
+        _validateName(_lastNameController.text, 'last name') == null &&
         _validateBusinessName(_businessNameController.text) == null &&
         validateCambodianPhone(_phoneController.text) == null &&
         _validateEmail(_emailController.text) == null &&
@@ -135,58 +145,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Register',
-          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.ink),
-        ),
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 44),
+          padding: const EdgeInsets.fromLTRB(25, 24, 25, 32),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 72),
-                // The design breaks this line explicitly rather than wrapping.
                 const Text(
-                  'Lets Register\nAccount',
+                  'Create Account',
                   style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -1.5,
                     color: AppColors.ink,
                   ),
                 ),
-                const SizedBox(height: 21),
+                const SizedBox(height: 6),
                 const Text(
-                  'Hello user , you have agreatful journey',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.ink,
-                  ),
+                  'Get on the road in minutes.',
+                  style: TextStyle(fontSize: 14, color: AppColors.inkSoft),
                 ),
-                const SizedBox(height: 29),
-                AppPillField(
-                  controller: _nameController,
-                  hint: 'Name',
-                  textInputAction: TextInputAction.next,
-                  validator: _validateName,
+                const SizedBox(height: 28),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _PillField(
+                        key: const Key('register_first_name_field'),
+                        controller: _firstNameController,
+                        hint: 'First Name',
+                        textInputAction: TextInputAction.next,
+                        validator: (v) => _validateName(v, 'first name'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _PillField(
+                        key: const Key('register_last_name_field'),
+                        controller: _lastNameController,
+                        hint: 'Last Name',
+                        textInputAction: TextInputAction.next,
+                        validator: (v) => _validateName(v, 'last name'),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 11),
-                AppPillField(
+                const SizedBox(height: 12),
+                _PillField(
+                  key: const Key('register_business_name_field'),
                   controller: _businessNameController,
-                  hint: 'Buissness name (optional)',
+                  hint: 'Business name (optional)',
                   textInputAction: TextInputAction.next,
                   validator: _validateBusinessName,
                 ),
-                const SizedBox(height: 11),
-                AppPillField(
+                const SizedBox(height: 12),
+                _PillField(
+                  key: const Key('register_phone_field'),
                   controller: _phoneController,
                   hint: 'Phone',
                   keyboardType: TextInputType.phone,
@@ -194,73 +210,152 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   inputFormatters: const [CambodianPhoneFormatter()],
                   validator: validateCambodianPhone,
                 ),
-                const SizedBox(height: 11),
-                AppPillField(
+                const SizedBox(height: 12),
+                _PillField(
+                  key: const Key('register_email_field'),
                   controller: _emailController,
-                  hint: 'Email',
+                  hint: 'Email Address',
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   validator: _validateEmail,
                 ),
-                const SizedBox(height: 11),
-                AppPillField(
+                const SizedBox(height: 12),
+                _PillField(
+                  key: const Key('register_password_field'),
                   controller: _passwordController,
                   hint: 'Password',
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   textInputAction: TextInputAction.next,
                   validator: _validatePassword,
+                  prefixIcon: Icons.lock_outline,
+                  suffixIcon: IconButton(
+                    key: const Key('register_show_password_button'),
+                    tooltip: _obscurePassword
+                        ? 'Show password'
+                        : 'Hide password',
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.inkSoft,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 11),
-                AppPillField(
+                const SizedBox(height: 12),
+                _PillField(
+                  key: const Key('register_confirm_password_field'),
                   controller: _confirmPasswordController,
-                  hint: 'Confirm password',
-                  obscureText: true,
+                  hint: 'Confirm Password',
+                  obscureText: _obscureConfirm,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _submit(),
                   validator: _validateConfirmPassword,
+                  prefixIcon: Icons.lock_outline,
+                  suffixIcon: IconButton(
+                    key: const Key('register_show_confirm_password_button'),
+                    tooltip: _obscureConfirm
+                        ? 'Show password'
+                        : 'Hide password',
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
+                    icon: Icon(
+                      _obscureConfirm
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.inkSoft,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 _TermsAcceptance(
                   onUnavailable: _notImplemented,
                   onChanged: _onTermsChanged,
                 ),
-                const SizedBox(height: 19),
-                AppPrimaryButton(
-                  label: 'Register Now',
-                  loading: _loading,
-                  isValid: _isValid,
-                  onPressed: _submit,
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 58,
+                  child: ElevatedButton(
+                    key: const Key('register_create_account_button'),
+                    onPressed: _loading ? null : _submit,
+                    // The CTA stays lime once the form is ready, matching the
+                    // readiness signal the original AppPrimaryButton provided.
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.onPrimary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: _loading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.onPrimary,
+                            ),
+                          )
+                        : const Text('Create Account'),
+                  ),
                 ),
-                const SizedBox(height: 33),
+                const SizedBox(height: 12),
+                TextButton(
+                  key: const Key('register_continue_guest_button'),
+                  onPressed: () => context.go('/home'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.ink,
+                    alignment: Alignment.centerLeft,
+                  ),
+                  child: const Text(
+                    'Continue as guest',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       const Text(
-                        'Already  have an account ?',
+                        'Already have an account?',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.textPlaceholder,
+                          fontSize: 14,
+                          color: AppColors.inkSoft,
                         ),
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
-                        onTap: () =>
-                            goWithSlide(context, '/login', reverse: true),
+                        key: const Key('register_go_to_login_button'),
+                        onTap: () => context.go('/login'),
                         behavior: HitTestBehavior.opaque,
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.ink,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4),
+                          child: Text(
+                            'Log In',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.ink,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 32),
               ],
             ),
           ),
@@ -268,6 +363,74 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+}
+
+/// Rounded pill field mirroring the Home screen's rounded-surface language.
+class _PillField extends StatelessWidget {
+  const _PillField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    required this.validator,
+    this.obscureText = false,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.keyboardType = TextInputType.text,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.inputFormatters,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final String? Function(String?) validator;
+  final bool obscureText;
+  final IconData? prefixIcon;
+  final Widget? suffixIcon;
+  final TextInputType keyboardType;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      validator: validator,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      inputFormatters: inputFormatters,
+      style: const TextStyle(fontSize: 16, color: AppColors.ink),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(fontSize: 16, color: AppColors.inkSoft),
+        prefixIcon: prefixIcon == null
+            ? null
+            : Icon(prefixIcon, size: 20, color: AppColors.inkSoft),
+        suffixIcon: suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        border: _border(),
+        enabledBorder: _border(),
+        focusedBorder: _border(color: AppColors.ink, width: 1.2),
+        errorBorder: _border(color: AppColors.danger),
+        focusedErrorBorder: _border(color: AppColors.danger, width: 1.2),
+      ),
+    );
+  }
+
+  static OutlineInputBorder _border({
+    Color color = AppColors.border,
+    double width = 1,
+  }) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide(color: color, width: width),
+      );
 }
 
 /// Terms + privacy consent, as a [FormField] so `_formKey.validate()` blocks
@@ -337,12 +500,12 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
                       state.didChange(v ?? false);
                       widget.onChanged(v ?? false);
                     },
-                    activeColor: AppColors.ink,
-                    checkColor: AppColors.onDark,
+                    activeColor: AppColors.primary,
+                    checkColor: AppColors.onPrimary,
                     side: BorderSide(
                       color: state.hasError
                           ? AppColors.danger
-                          : AppColors.fieldBorder,
+                          : AppColors.border,
                       width: 1.2,
                     ),
                     shape: RoundedRectangleBorder(
@@ -370,7 +533,7 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
                     ),
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppColors.textPlaceholder,
+                      color: AppColors.inkSoft,
                     ),
                   ),
                 ),
@@ -390,3 +553,4 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
     );
   }
 }
+
