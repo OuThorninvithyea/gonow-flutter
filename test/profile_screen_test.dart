@@ -229,4 +229,60 @@ void main() {
 
     expect(find.textContaining('coming soon'), findsOneWidget);
   });
+
+  testWidgets('editing profile as a guest prompts to sign in instead of '
+      'opening the sheet', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    await tester.dragUntilVisible(
+      find.text('Edit name, email & phone'),
+      find.byType(SingleChildScrollView),
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Edit name, email & phone'));
+    await tester.pump();
+
+    expect(find.text('Sign in to edit your profile.'), findsOneWidget);
+    expect(find.byKey(const Key('profile_save_button')), findsNothing);
+  });
+
+  testWidgets('editing profile while signed in updates name, phone and '
+      'email', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pumpAndSettle();
+
+    unawaited(
+      auth.register(
+        fullName: 'Sokha Chan',
+        phone: '012345678',
+        password: 'password',
+        email: 'sokha@email.com',
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    await tester.dragUntilVisible(
+      find.text('Edit name, email & phone'),
+      find.byType(SingleChildScrollView),
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Edit name, email & phone'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edit profile'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('profile_edit_name_field')),
+      'Sokha Updated',
+    );
+    await tester.tap(find.byKey(const Key('profile_save_button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sokha Updated'), findsOneWidget);
+    expect(auth.user?.fullName, 'Sokha Updated');
+  });
 }
