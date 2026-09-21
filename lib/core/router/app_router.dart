@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'tab_navigation.dart';
 import '../../models/booking.dart';
 import '../../models/vehicle_listing.dart';
 import '../../screens/auth/forgot_password_screen.dart';
@@ -30,10 +31,13 @@ final appRouter = GoRouter(
       path: '/onboarding',
       builder: (context, state) => const OnboardingScreen(),
     ),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+    GoRoute(
+      path: '/login',
+      pageBuilder: (context, state) => slidePage(state, const LoginScreen()),
+    ),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterScreen(),
+      pageBuilder: (context, state) => slidePage(state, const RegisterScreen()),
     ),
     GoRoute(
       path: '/verify-otp',
@@ -51,11 +55,20 @@ final appRouter = GoRouter(
       path: '/reset-password/new',
       builder: (context, state) => const ResetNewPasswordScreen(),
     ),
-    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: '/home',
+      pageBuilder: (context, state) => slidePage(state, const HomeScreen()),
+    ),
     GoRoute(
       path: '/map',
-      builder: (context, state) =>
-          MapScreen(vehicle: state.extra as VehicleListing?),
+      pageBuilder: (context, state) => slidePage(
+        state,
+        MapScreen(
+          vehicle: state.extra is VehicleListing
+              ? state.extra! as VehicleListing
+              : null,
+        ),
+      ),
     ),
     GoRoute(
       path: '/vehicles',
@@ -63,12 +76,16 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/rentals',
-      builder: (context, state) => const RentalHistoryScreen(),
+      pageBuilder: (context, state) =>
+          slidePage(state, const RentalHistoryScreen()),
     ),
-    GoRoute(path: '/saved', builder: (context, state) => const SavedScreen()),
+    GoRoute(
+      path: '/saved',
+      pageBuilder: (context, state) => slidePage(state, const SavedScreen()),
+    ),
     GoRoute(
       path: '/profile',
-      builder: (context, state) => const ProfileScreen(),
+      pageBuilder: (context, state) => slidePage(state, const ProfileScreen()),
     ),
     GoRoute(
       path: '/notifications',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_pill_field.dart';
@@ -182,7 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
-                        onTap: () => context.go('/register'),
+                        onTap: () =>
+                            goWithSlide(context, '/register', reverse: false),
                         behavior: HitTestBehavior.opaque,
                         child: const Text(
                           'Create Account',
