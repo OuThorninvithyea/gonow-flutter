@@ -144,6 +144,36 @@ void main() {
     expect(find.text('Black'), findsOneWidget);
   });
 
+  testWidgets('the rent sheet can save a scooter', (tester) async {
+    await tester.pumpWidget(_wrap());
+    await _settle(tester);
+
+    final cardFinder = find.text('Fortuner GR');
+    await tester.ensureVisible(cardFinder);
+    await _settle(tester);
+    await tester.tap(cardFinder);
+    await _settle(tester);
+
+    final save = find.byWidgetPredicate(
+      (w) => w is Semantics && w.properties.label == 'Save Fortuner GR',
+    );
+    expect(save, findsOneWidget);
+
+    await tester.tap(save, warnIfMissed: false);
+    await _settle(tester);
+
+    // The heart flips to "remove", so the toggle reached the provider.
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Semantics &&
+            w.properties.label == 'Remove Fortuner GR from saved scooters',
+      ),
+      findsOneWidget,
+    );
+    expect(save, findsNothing);
+  });
+
   testWidgets('the bell icon opens notifications', (tester) async {
     await tester.pumpWidget(_wrap());
     await _settle(tester);

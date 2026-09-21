@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
+import '../providers/saved_vehicles_provider.dart';
 import 'vehicle_color_picker.dart';
 
 Future<void> showVehicleDetailSheet(
@@ -85,16 +87,19 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  vehicle.name,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.ink,
+                Expanded(
+                  child: Text(
+                    vehicle.name,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.ink,
+                    ),
                   ),
                 ),
+                _SaveButton(vehicle: vehicle),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -176,6 +181,46 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Heart toggle in the sheet header, writing to the same
+/// [SavedVehiclesProvider] the vehicle list and saved screen share — so a
+/// save here shows up on the Saved tab straight away.
+///
+/// The list tile's heart sits on a dark tile and uses [AppColors.primary];
+/// this one is on a white sheet, where lime reads badly, so it follows the
+/// saved screen's light-surface treatment instead.
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({required this.vehicle});
+
+  final VehicleListing vehicle;
+
+  @override
+  Widget build(BuildContext context) {
+    final saved = context.select<SavedVehiclesProvider, bool>(
+      (p) => p.isSaved(vehicle.id),
+    );
+
+    return Semantics(
+      button: true,
+      label: saved
+          ? 'Remove ${vehicle.name} from saved scooters'
+          : 'Save ${vehicle.name}',
+      child: GestureDetector(
+        onTap: () => context.read<SavedVehiclesProvider>().toggle(vehicle.id),
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(
+            saved ? Icons.favorite : Icons.favorite_border,
+            size: 24,
+            color: saved ? AppColors.savedHeartFill : AppColors.inkSoft,
+          ),
         ),
       ),
     );

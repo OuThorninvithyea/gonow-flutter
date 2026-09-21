@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:gonow/models/vehicle_listing.dart';
+import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/map_screen.dart';
 import 'package:gonow/screens/home/rental_history_screen.dart';
 
@@ -20,7 +22,11 @@ Widget _wrap({VehicleListing? vehicle}) {
       GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
     ],
   );
-  return MaterialApp.router(routerConfig: router);
+  // The rent sheet's heart reads SavedVehiclesProvider.
+  return ChangeNotifierProvider(
+    create: (_) => SavedVehiclesProvider(),
+    child: MaterialApp.router(routerConfig: router),
+  );
 }
 
 void main() {

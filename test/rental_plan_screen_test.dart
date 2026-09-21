@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gonow/models/vehicle_listing.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/booking/rental_plan_screen.dart';
 import 'package:gonow/widgets/vehicle_detail_sheet.dart';
 
@@ -46,7 +48,13 @@ void main() {
         ),
       ],
     );
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    // The rent sheet's heart reads SavedVehiclesProvider.
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => SavedVehiclesProvider(),
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
 
     await tester.tap(find.text('open sheet'));
     await tester.pumpAndSettle();
