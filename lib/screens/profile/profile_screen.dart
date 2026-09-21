@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/router/nav_destination.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/mock_vehicles.dart';
 import '../../models/user.dart';
