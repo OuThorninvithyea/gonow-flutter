@@ -223,9 +223,6 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Figma's avatar is a Code Connect primitive with a placeholder image, so
-    // no asset was exported. Fall back to a single initial, per the component
-    // description in the design file.
     final initial = name.trim().isEmpty ? '?' : name.trim()[0].toUpperCase();
 
     return Row(
@@ -380,8 +377,6 @@ class _PromoBannerState extends State<_PromoBanner> {
               ),
             ),
           ),
-          // Scrim from the design — without it the white copy is unreadable
-          // against the busy illustration.
           Positioned.fill(child: Container(color: const Color(0x63080707))),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 15, 24, 15),

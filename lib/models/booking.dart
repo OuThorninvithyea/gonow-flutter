@@ -18,8 +18,6 @@ class Booking {
   /// Short reference shown on the confirmation screen, e.g. "GN-BK-1024".
   final String bookingId;
 
-  // --- Figma "Price breakdown" (90:979 / 179:753) — mock fixed fees on
-  // top of the plan's own price, since GoNow has no live pricing API yet.
   static const double serviceFee = 1;
   static const double refundableDeposit = 0;
 

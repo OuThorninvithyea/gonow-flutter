@@ -96,9 +96,6 @@ class _MapScreenState extends State<MapScreen> {
           const Positioned.fill(child: _MapBackground()),
           Column(
             children: [
-              // Reachable both as a nav tab (nothing to pop, go home) and
-              // pushed on top of another screen (e.g. "Start Navigation"
-              // from booking-confirmed) — pop back there when possible.
               _Header(
                 onBack: () =>
                     context.canPop() ? context.pop() : context.go('/home'),
@@ -110,8 +107,6 @@ class _MapScreenState extends State<MapScreen> {
                 selected: _filterIndex,
                 onSelected: (i) => setState(() {
                   _filterIndex = i;
-                  // A manual filter tap supersedes a prior search pick, so
-                  // the search box shouldn't keep showing a stale location.
                   _searchedLocation = null;
                 }),
               ),
@@ -334,8 +329,6 @@ class _PickupSearchSheetState extends State<_PickupSearchSheet> {
     final results = _results;
 
     return Padding(
-      // Keeps the sheet above the keyboard instead of letting it cover
-      // the text field.
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),

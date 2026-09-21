@@ -31,7 +31,7 @@ const vehicleColorOptions = <VehicleColorOption>[
     name: 'Red',
     swatch: Color(0xFF8B1E24),
     asset: 'assets/images/home/scooter_red.png',
-    available: false, // Mock: sold out until restocked.
+    available: false,
   ),
 ];
 

@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        toolbarHeight: 0, // Hidden on splash — no title needed
+        toolbarHeight: 0,
       ),
       body: Center(
         child: FractionallySizedBox(
