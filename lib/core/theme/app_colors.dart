@@ -134,6 +134,13 @@ class AppColors {
   /// "Receipt" link on each ride row.
   static const historyReceiptLink = Color(0xFF587300);
 
+  /// "Default" badge fill on the booking-receipt payment row, and the
+  /// checkmark glyph on the pale-lime "payment received" badge. The glyph is
+  /// one hex step off [successCheckDark] in the Figma file (different badge
+  /// fill), so it stays its own token.
+  static const profileDefaultBadgeBg = Color(0xFFE8F8BB);
+  static const receiptCheckGreen = Color(0xFF476000);
+
   /// "N saved" count pill on the dark header.
   static const profileVerifiedChipBg = Color(0x1FFFFFFF);
 

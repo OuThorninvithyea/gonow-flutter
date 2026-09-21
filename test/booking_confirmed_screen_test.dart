@@ -35,6 +35,15 @@ Widget _wrap(Booking booking) {
           return Scaffold(body: Text('map screen for ${vehicle.code}'));
         },
       ),
+      GoRoute(
+        path: '/booking-receipt',
+        builder: (context, state) {
+          // Same idea as /map above: prove the booking arrived intact. The
+          // receipt screen has its own test.
+          final received = state.extra! as Booking;
+          return Scaffold(body: Text('receipt for ${received.bookingId}'));
+        },
+      ),
     ],
   );
   return MaterialApp.router(routerConfig: router);
@@ -100,12 +109,15 @@ void main() {
     expect(find.text('map screen for ${booking.vehicle.code}'), findsOneWidget);
   });
 
-  testWidgets('View Booking is wired, not a dead tap', (tester) async {
-    await tester.pumpWidget(_wrap(_booking()));
+  testWidgets('View Booking opens the receipt for this booking', (
+    tester,
+  ) async {
+    final booking = _booking();
+    await tester.pumpWidget(_wrap(booking));
 
     await tester.tap(find.text('View Booking'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.textContaining('coming soon'), findsOneWidget);
+    expect(find.text('receipt for ${booking.bookingId}'), findsOneWidget);
   });
 }

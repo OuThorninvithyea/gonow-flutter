@@ -3,6 +3,7 @@ import '../../models/booking.dart';
 import '../../models/vehicle_listing.dart';
 import '../../screens/auth/forgot_password_screen.dart';
 import '../../screens/booking/booking_confirmed_screen.dart';
+import '../../screens/booking/booking_receipt_screen.dart';
 import '../../screens/booking/booking_summary_screen.dart';
 import '../../screens/booking/payment_screen.dart';
 import '../../screens/booking/rental_plan_screen.dart';
@@ -82,6 +83,11 @@ final appRouter = GoRouter(
       path: '/payment',
       builder: (context, state) =>
           PaymentScreen(booking: state.extra! as Booking),
+    ),
+    GoRoute(
+      path: '/booking-receipt',
+      builder: (context, state) =>
+          BookingReceiptScreen(booking: state.extra! as Booking),
     ),
     GoRoute(
       path: '/booking-confirmed',

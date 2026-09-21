@@ -48,9 +48,8 @@ class BookingConfirmedScreen extends StatelessWidget {
             ),
           ),
           _BottomActions(
-            onViewBooking: () => ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Booking details are coming soon.')),
-            ),
+            onViewBooking: () =>
+                context.push<void>('/booking-receipt', extra: booking),
             onStartNavigation: () =>
                 context.push<void>('/map', extra: booking.vehicle),
           ),
