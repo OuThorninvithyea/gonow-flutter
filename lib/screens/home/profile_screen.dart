@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/rental_plan.dart';
 import '../../models/rental_record.dart';
@@ -56,13 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: AppColors.canvas,
       body: Column(
         children: [
-          _Header(
-            name: name,
-            email: email,
-            initials: initials,
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-          ),
+          _Header(name: name, email: email, initials: initials),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -159,28 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.profile,
-        onTap: (tab) {
-          if (tab == AppNavTab.profile) return;
-          if (tab == AppNavTab.home) {
-            context.canPop() ? context.pop() : context.go('/home');
-            return;
-          }
-          if (tab == AppNavTab.map) {
-            context.push('/map');
-            return;
-          }
-          if (tab == AppNavTab.rentals) {
-            context.push('/rentals');
-            return;
-          }
-          if (tab == AppNavTab.saved) {
-            context.push('/saved');
-            return;
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
-          );
-        },
+        onTap: (tab) => goToTab(context, tab, from: AppNavTab.profile),
       ),
     );
   }
@@ -200,13 +174,11 @@ class _Header extends StatelessWidget {
     required this.name,
     required this.email,
     required this.initials,
-    required this.onBack,
   });
 
   final String name;
   final String email;
   final String initials;
-  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -220,31 +192,6 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Semantics(
-                button: true,
-                label: 'Back',
-                child: GestureDetector(
-                  onTap: onBack,
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.inkBorder,
-                        width: 0.7,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      '←',
-                      style: TextStyle(fontSize: 24, color: AppColors.onDark),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
               Row(
                 children: [
                   Container(

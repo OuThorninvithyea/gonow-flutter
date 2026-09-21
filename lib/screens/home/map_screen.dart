@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/vehicle_listing.dart';
 import '../../widgets/app_bottom_nav.dart';
@@ -88,8 +88,6 @@ class _MapScreenState extends State<MapScreen> {
               // pushed on top of another screen (e.g. "Start Navigation"
               // from booking-confirmed) — pop back there when possible.
               _Header(
-                onBack: () =>
-                    context.canPop() ? context.pop() : context.go('/home'),
                 onSearchTap: _openPickupSearch,
                 searchLabel: _searchedLocation ?? 'Search pickup location',
                 hasSearchValue: _searchedLocation != null,
@@ -114,28 +112,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.map,
-        onTap: (tab) {
-          if (tab == AppNavTab.map) return;
-          if (tab == AppNavTab.home) {
-            context.canPop() ? context.pop() : context.go('/home');
-            return;
-          }
-          if (tab == AppNavTab.rentals) {
-            context.push('/rentals');
-            return;
-          }
-          if (tab == AppNavTab.profile) {
-            context.push('/profile');
-            return;
-          }
-          if (tab == AppNavTab.saved) {
-            context.push('/saved');
-            return;
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
-          );
-        },
+        onTap: (tab) => goToTab(context, tab, from: AppNavTab.map),
       ),
     );
   }
@@ -156,13 +133,11 @@ class _MapBackground extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   const _Header({
-    required this.onBack,
     required this.onSearchTap,
     required this.searchLabel,
     required this.hasSearchValue,
   });
 
-  final VoidCallback onBack;
   final VoidCallback onSearchTap;
   final String searchLabel;
   final bool hasSearchValue;
@@ -198,82 +173,48 @@ class _Header extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 13),
-              Row(
-                children: [
-                  Semantics(
-                    button: true,
-                    label: 'Back',
-                    child: GestureDetector(
-                      onTap: onBack,
-                      behavior: HitTestBehavior.opaque,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.inkBorder,
-                            width: 0.7,
+              Semantics(
+                button: true,
+                label: 'Search pickup location',
+                value: hasSearchValue ? searchLabel : null,
+                child: GestureDetector(
+                  onTap: onSearchTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    height: 43,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.search,
+                          size: 20,
+                          color: AppColors.ink,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            searchLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: hasSearchValue
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                              color: hasSearchValue
+                                  ? AppColors.ink
+                                  : AppColors.inkSoft,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          '←',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: AppColors.onDark,
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 9),
-                  Expanded(
-                    child: Semantics(
-                      button: true,
-                      label: 'Search pickup location',
-                      value: hasSearchValue ? searchLabel : null,
-                      child: GestureDetector(
-                        onTap: onSearchTap,
-                        behavior: HitTestBehavior.opaque,
-                        child: Container(
-                          height: 43,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.search,
-                                size: 20,
-                                color: AppColors.ink,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  searchLabel,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: hasSearchValue
-                                        ? FontWeight.w600
-                                        : FontWeight.w400,
-                                    color: hasSearchValue
-                                        ? AppColors.ink
-                                        : AppColors.inkSoft,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),

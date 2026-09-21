@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/app_bottom_nav.dart';
 
@@ -114,11 +114,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backgroundColor: AppColors.surface,
       body: Column(
         children: [
-          _Header(
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-            count: _notifications.length,
-          ),
+          _Header(count: _notifications.length),
           _FilterBar(selected: _filterIndex, onSelected: _selectFilter),
           Expanded(
             child: ListView.separated(
@@ -133,28 +129,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.home,
-        onTap: (tab) {
-          if (tab == AppNavTab.home) {
-            context.canPop() ? context.pop() : context.go('/home');
-            return;
-          }
-          if (tab == AppNavTab.map) {
-            context.push('/map');
-            return;
-          }
-          if (tab == AppNavTab.rentals) {
-            context.push('/rentals');
-            return;
-          }
-          if (tab == AppNavTab.profile) {
-            context.push('/profile');
-            return;
-          }
-          if (tab == AppNavTab.saved) {
-            context.push('/saved');
-            return;
-          }
-        },
+        onTap: (tab) => goToTab(context, tab, from: AppNavTab.home),
       ),
     );
   }
@@ -163,9 +138,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 const _filters = ['All', 'Unread', 'Rides'];
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack, required this.count});
+  const _Header({required this.count});
 
-  final VoidCallback onBack;
   final int count;
 
   @override
@@ -180,31 +154,6 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Semantics(
-                button: true,
-                label: 'Back',
-                child: GestureDetector(
-                  onTap: onBack,
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.inkBorder,
-                        width: 0.7,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      '←',
-                      style: TextStyle(fontSize: 24, color: AppColors.onDark),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 28),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

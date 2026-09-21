@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/phone_number.dart';
 import '../../providers/auth_provider.dart';
@@ -244,7 +245,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
-                        onTap: () => context.go('/login'),
+                        onTap: () =>
+                            goWithSlide(context, '/login', reverse: true),
                         behavior: HitTestBehavior.opaque,
                         child: const Text(
                           'Login',

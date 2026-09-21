@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/auth_provider.dart';
@@ -29,12 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
       (v) => v.filterTag == tag,
       orElse: () => vehicleListings.first,
     );
-  }
-
-  void _comingSoon(String what) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$what is coming soon.')));
   }
 
   void _showNotifications() {
@@ -120,26 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.home,
-        onTap: (tab) {
-          if (tab == AppNavTab.home) return;
-          if (tab == AppNavTab.map) {
-            context.push('/map');
-            return;
-          }
-          if (tab == AppNavTab.rentals) {
-            context.push('/rentals');
-            return;
-          }
-          if (tab == AppNavTab.profile) {
-            context.push('/profile');
-            return;
-          }
-          if (tab == AppNavTab.saved) {
-            context.push('/saved');
-            return;
-          }
-          _comingSoon('The ${tab.name} tab');
-        },
+        onTap: (tab) => goToTab(context, tab, from: AppNavTab.home),
       ),
     );
   }
@@ -275,6 +251,22 @@ class _PromoBannerState extends State<_PromoBanner> {
   int _index = 0;
   Timer? _timer;
 
+  /// Decoded at roughly banner size rather than the full 1140×1568 source,
+  /// and warmed up front — decoding a slide the moment it's due is what
+  /// made the crossfade flash blank.
+  static final _images = [
+    for (final promo in _promos)
+      ResizeImage(AssetImage(promo.asset), width: 900, allowUpscaling: false),
+  ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    for (final image in _images) {
+      precacheImage(image, context);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -301,12 +293,17 @@ class _PromoBannerState extends State<_PromoBanner> {
           Positioned.fill(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-              child: Image.asset(
-                promo.asset,
-                key: ValueKey(promo.asset),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeOut,
+              layoutBuilder: (current, previous) => Stack(
+                fit: StackFit.expand,
+                children: [...previous, ?current],
+              ),
+              child: Image(
+                key: ValueKey(_index),
+                image: _images[_index],
                 fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
+                gaplessPlayback: true,
               ),
             ),
           ),
@@ -324,6 +321,25 @@ class _PromoBannerState extends State<_PromoBanner> {
                 children: [
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeOut,
+                    // The default layout centres the outgoing and incoming
+                    // copy, so lines of different widths jumped sideways
+                    // mid-fade. Pin both to the top-left instead.
+                    layoutBuilder: (current, previous) => Stack(
+                      alignment: Alignment.topLeft,
+                      children: [...previous, ?current],
+                    ),
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween(
+                          begin: const Offset(0, 0.15),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    ),
                     child: Column(
                       key: ValueKey(promo.headline),
                       crossAxisAlignment: CrossAxisAlignment.start,

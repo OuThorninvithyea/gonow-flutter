@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/saved_vehicles_provider.dart';
@@ -53,11 +54,7 @@ class _SavedScreenState extends State<SavedScreen> {
       backgroundColor: AppColors.canvas,
       body: Column(
         children: [
-          _Header(
-            onBack: () =>
-                context.canPop() ? context.pop() : context.go('/home'),
-            count: savedVehicles.length,
-          ),
+          _Header(count: savedVehicles.length),
           _FilterBar(selected: _filterIndex, onSelected: _selectFilter),
           Expanded(
             child: savedVehicles.isEmpty
@@ -92,34 +89,15 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.saved,
-        onTap: (tab) {
-          if (tab == AppNavTab.saved) return;
-          if (tab == AppNavTab.home) {
-            context.canPop() ? context.pop() : context.go('/home');
-            return;
-          }
-          if (tab == AppNavTab.map) {
-            context.push('/map');
-            return;
-          }
-          if (tab == AppNavTab.rentals) {
-            context.push('/rentals');
-            return;
-          }
-          if (tab == AppNavTab.profile) {
-            context.push('/profile');
-            return;
-          }
-        },
+        onTap: (tab) => goToTab(context, tab, from: AppNavTab.saved),
       ),
     );
   }
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.onBack, required this.count});
+  const _Header({required this.count});
 
-  final VoidCallback onBack;
   final int count;
 
   @override
@@ -134,31 +112,6 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Semantics(
-                button: true,
-                label: 'Back',
-                child: GestureDetector(
-                  onTap: onBack,
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.inkBorder,
-                        width: 0.7,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      '←',
-                      style: TextStyle(fontSize: 24, color: AppColors.onDark),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 28),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
