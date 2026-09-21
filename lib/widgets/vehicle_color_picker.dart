@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
 
-/// Row of color swatches for picking a vehicle's paint option.
-///
-/// Unavailable colors (Figma color-variant component marked out of stock)
-/// are shown but disabled, with a small "Sold out" note beneath the row
-/// when the selection lands on one — this only happens if the caller
-/// deliberately selects an unavailable option, since [onSelected] does
-/// not fire for disabled swatches.
+
 class VehicleColorPicker extends StatelessWidget {
   const VehicleColorPicker({
     super.key,

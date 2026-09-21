@@ -14,6 +14,7 @@ import '../../screens/auth/reset_password_code_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/home/map_screen.dart';
 import '../../screens/home/rental_history_screen.dart';
+import '../../screens/home/saved_screen.dart';
 import '../../screens/home/vehicle_list_screen.dart';
 import '../../screens/onboarding/onboarding_screen.dart';
 import '../../screens/profile/profile_screen.dart';
@@ -66,6 +67,7 @@ final appRouter = GoRouter(
       path: '/rentals',
       builder: (context, state) => const RentalHistoryScreen(),
     ),
+    GoRoute(path: '/saved', builder: (context, state) => const SavedScreen()),
     GoRoute(
       path: '/rental-plan',
       builder: (context, state) =>

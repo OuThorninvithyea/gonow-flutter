@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/date_format.dart';
 import '../../models/booking.dart';
 import '../../models/vehicle_listing.dart';
 
-/// "Booking Confirmed" — Figma "payment-flow" section, `comfirm-booking`
-/// frame (182:344). Terminal screen of the payment flow: the rider has
-/// paid and just needs the booking ID and a way back to the fleet.
-///
-/// Reached via `context.go`, replacing the whole plan → summary → payment
-/// stack, so the device back button from here exits toward `/home` rather
-/// than re-opening a completed payment.
 class BookingConfirmedScreen extends StatelessWidget {
   const BookingConfirmedScreen({super.key, required this.booking});
 

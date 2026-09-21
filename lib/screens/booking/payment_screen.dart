@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../core/theme/app_colors.dart';
 import '../../models/booking.dart';
 
-/// "Processing payment" → "Payment successful" — Figma "payment-flow"
-/// section, nodes 90:1323 and 90:1651. Both are small floating cards (not
-/// full 431pt frames like the rest of the flow), so this screen renders
-/// them as a centered dialog card over the canvas background.
-///
-/// There is no real payment gateway yet — [_processingDuration] simulates
-/// the KHQR charge the Figma "Paid · KHQR" badge on the next screen refers
-/// to, then flips to the success state.
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({
     super.key,

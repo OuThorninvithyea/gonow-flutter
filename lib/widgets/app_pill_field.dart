@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/theme/app_colors.dart';
 
-/// Rounded outline field used across the auth screens.
-///
-/// Matches the Figma auth spec: 58.29pt tall, 30pt radius, 0.6pt `#8E8383`
-/// outline, with the placeholder sitting inline instead of a label above.
 class AppPillField extends StatelessWidget {
   const AppPillField({
     super.key,

@@ -90,6 +90,10 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             context.push('/rentals');
             return;
           }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           if (tab == AppNavTab.profile) {
             context.push('/profile');
             return;

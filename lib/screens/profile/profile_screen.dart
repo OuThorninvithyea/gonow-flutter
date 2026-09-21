@@ -123,9 +123,10 @@ class ProfileScreen extends StatelessWidget {
             context.go('/rentals');
             return;
           }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Saved is coming soon.')),
-          );
+          if (tab == AppNavTab.saved) {
+            context.go('/saved');
+            return;
+          }
         },
       ),
     );

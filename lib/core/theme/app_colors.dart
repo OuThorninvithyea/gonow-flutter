@@ -152,6 +152,21 @@ class AppColors {
   /// "Receipt" link on each ride row.
   static const historyReceiptLink = Color(0xFF587300);
 
+  // --- Saved screen (Figma "SavedScreen") -----------------------------------
+
+  /// "N saved" count pill on the dark header.
+  static const profileVerifiedChipBg = Color(0x1FFFFFFF);
+
+  /// Inactive filter-chip label, and the supporting line under a saved
+  /// vehicle's code.
+  static const profileRowSubtextMuted = Color(0xFF89908B);
+
+  /// Small "still available" dot beside a saved vehicle's code.
+  static const notificationUnreadDot = Color(0xFF719700);
+
+  /// Filled heart on a saved-vehicle card — tapping it unsaves the vehicle.
+  static const savedHeartFill = Color(0xFFD94141);
+
   // --- Navigation ----------------------------------------------------------
 
   static const navActive = Color(0xFF415F00);

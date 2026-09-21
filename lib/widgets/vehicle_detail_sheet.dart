@@ -4,11 +4,6 @@ import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
 import 'vehicle_color_picker.dart';
 
-/// Bottom sheet showing full vehicle detail with a working "Rent now" CTA,
-/// which continues into the rental-plan screen.
-///
-/// Used from the home screen (tapping the featured scooter image or the
-/// dark vehicle card) and from the full vehicle list.
 Future<void> showVehicleDetailSheet(
   BuildContext context,
   VehicleListing vehicle,

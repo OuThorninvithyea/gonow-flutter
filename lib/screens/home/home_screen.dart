@@ -134,6 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
             context.push('/rentals');
             return;
           }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
           if (tab == AppNavTab.profile) {
             context.push('/profile');
             return;
