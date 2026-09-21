@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/saved_vehicles_provider.dart';
@@ -78,7 +77,25 @@ class _SavedScreenState extends State<SavedScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.saved,
-        onTap: (tab) => goToTab(context, tab, from: AppNavTab.saved),
+        onTap: (tab) {
+          if (tab == AppNavTab.saved) return;
+          if (tab == AppNavTab.home) {
+            context.canPop() ? context.pop() : context.go('/home');
+            return;
+          }
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
+          if (tab == AppNavTab.rentals) {
+            context.push('/rentals');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+        },
       ),
     );
   }

@@ -15,6 +15,18 @@ class BookingConfirmedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      appBar: AppBar(
+        backgroundColor: AppColors.ink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Booking Confirmed',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AppColors.onDark,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           const _Header(),
@@ -36,8 +48,9 @@ class BookingConfirmedScreen extends StatelessWidget {
             ),
           ),
           _BottomActions(
-            onViewBooking: () =>
-                context.push<void>('/booking-receipt', extra: booking),
+            onViewBooking: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Booking details are coming soon.')),
+            ),
             onStartNavigation: () =>
                 context.push<void>('/map', extra: booking.vehicle),
           ),

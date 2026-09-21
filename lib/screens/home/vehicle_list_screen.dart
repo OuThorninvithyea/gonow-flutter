@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/vehicle_listing.dart';
 import '../../providers/saved_vehicles_provider.dart';
@@ -36,6 +35,18 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.ink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Available Vehicles',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AppColors.onDark,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           _Header(
@@ -66,7 +77,31 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.map,
-        onTap: (tab) => goToTab(context, tab, from: AppNavTab.map),
+        onTap: (tab) {
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
+          if (tab == AppNavTab.home) {
+            context.canPop() ? context.pop() : context.go('/home');
+            return;
+          }
+          if (tab == AppNavTab.rentals) {
+            context.push('/rentals');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
+          );
+        },
       ),
     );
   }
@@ -87,7 +122,7 @@ class _Header extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(18, topInset + 20, 18, 24),
+      padding: EdgeInsets.fromLTRB(18, topInset + 8, 18, 24),
       decoration: const BoxDecoration(
         color: AppColors.ink,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
@@ -95,6 +130,25 @@ class _Header extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          GestureDetector(
+            onTap: () => context.canPop() ? context.pop() : context.go('/home'),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.inkBorder, width: 0.7),
+              ),
+              child: const Icon(
+                Icons.arrow_back,
+                color: AppColors.onDark,
+                size: 22,
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
           const Text(
             'AVAILABLE NEARBY',
             style: TextStyle(

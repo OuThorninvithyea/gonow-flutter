@@ -130,11 +130,6 @@ class AppColors {
   /// Checkmark glyph color on the lime "payment successful" badge.
   static const successCheckDark = Color(0xFF203026);
 
-  /// Checkmark glyph color on the pale-lime "payment received" badge on the
-  /// booking-receipt screen. One hex step off [successCheckDark] in the
-  /// Figma file (different badge fill), so kept as its own token.
-  static const receiptCheckGreen = Color(0xFF476000);
-
   // --- Map screen (Figma "iPhone 16 Plus - 13": static Mapsicle image,
   // no live map SDK) -------------------------------------------------------
 
@@ -157,44 +152,17 @@ class AppColors {
   /// "Receipt" link on each ride row.
   static const historyReceiptLink = Color(0xFF587300);
 
-  // --- Profile screen (Figma "ProfileScreen") -------------------------------
+  // --- Saved screen (Figma "SavedScreen") -----------------------------------
 
-  /// "Phone verified" pill fill on the dark header.
+  /// "N saved" count pill on the dark header.
   static const profileVerifiedChipBg = Color(0x1FFFFFFF);
 
-  /// "Phone verified" label text (lime-tinted, on the dark chip).
-  static const profileVerifiedText = Color(0xFFE9F9BE);
-
-  /// "ABA / KHQR" leading icon tile fill (brand blue, matches the KHQR mark).
-  static const profilePaymentIconBg = Color(0xFF2870C8);
-
-  /// "Default" badge fill/text on the primary payment method row.
-  static const profileDefaultBadgeBg = Color(0xFFE8F8BB);
-  static const profileDefaultBadgeText = Color(0xFF4B6100);
-
-  /// Supporting text under a payment method / saved location row shares
-  /// [historyStatLabel]'s hex — reuse it rather than duplicate a token.
+  /// Inactive filter-chip label, and the supporting line under a saved
+  /// vehicle's code.
   static const profileRowSubtextMuted = Color(0xFF89908B);
 
-  /// Emergency-contact card fill shares [termsChipBg]'s hex — reuse it.
-  /// Its body copy gets its own token below (no existing match).
-  static const profileEmergencyBody = Color(0xFF626B65);
-
-  /// Trusted-contact input border.
-  static const profileInputBorder = Color(0xFFD8DED6);
-
-  /// "Log out" label — the one destructive-red text in the file.
-  static const profileLogoutText = Color(0xFFA03131);
-
-  // --- Notification screen (Figma "iPhone 16 Plus - 26") -------------------
-
-  /// Unread-dot color on a notification card.
+  /// Small "still available" dot beside a saved vehicle's code.
   static const notificationUnreadDot = Color(0xFF719700);
-
-  /// Active filter chip label — dark text on the lime fill.
-  static const notificationChipActiveText = Color(0xFF1D2329);
-
-  // --- Saved screen (Figma "SavedScreen") -----------------------------------
 
   /// Filled heart on a saved-vehicle card — tapping it unsaves the vehicle.
   static const savedHeartFill = Color(0xFFD94141);

@@ -132,11 +132,11 @@ void main() {
     expect(find.textContaining('coming soon'), findsOneWidget);
   });
 
-  testWidgets('the back control returns to home', (tester) async {
+  testWidgets('the Home tab returns to home', (tester) async {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('←'));
+    await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
 
     expect(find.text('home screen'), findsOneWidget);

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
+import 'providers/profile_provider.dart';
 import 'providers/saved_vehicles_provider.dart';
 
 void main() {
@@ -17,6 +18,7 @@ class GoNowApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()..load()),
         ChangeNotifierProvider(create: (_) => SavedVehiclesProvider()),
       ],
       child: MaterialApp.router(

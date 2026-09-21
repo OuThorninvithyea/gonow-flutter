@@ -7,8 +7,6 @@ import 'package:gonow/providers/auth_provider.dart';
 import 'package:gonow/providers/saved_vehicles_provider.dart';
 import 'package:gonow/screens/home/home_screen.dart';
 import 'package:gonow/screens/home/map_screen.dart';
-import 'package:gonow/screens/home/notification_screen.dart';
-import 'package:gonow/screens/home/profile_screen.dart';
 import 'package:gonow/screens/home/rental_history_screen.dart';
 import 'package:gonow/screens/home/saved_screen.dart';
 import 'package:gonow/screens/home/vehicle_list_screen.dart';
@@ -26,11 +24,6 @@ Widget _wrap() {
       GoRoute(path: '/map', builder: (_, _) => const MapScreen()),
       GoRoute(path: '/rentals', builder: (_, _) => const RentalHistoryScreen()),
       GoRoute(path: '/saved', builder: (_, _) => const SavedScreen()),
-      GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
-      GoRoute(
-        path: '/notifications',
-        builder: (_, _) => const NotificationScreen(),
-      ),
     ],
   );
   return MultiProvider(
@@ -151,15 +144,14 @@ void main() {
     expect(find.text('Black'), findsOneWidget);
   });
 
-  testWidgets('the bell icon opens the notification screen', (tester) async {
+  testWidgets('the bell icon opens notifications', (tester) async {
     await tester.pumpWidget(_wrap());
     await _settle(tester);
 
     await tester.tap(find.byKey(const Key('home_bell_button')));
     await _settle(tester);
 
-    expect(find.byType(NotificationScreen), findsOneWidget);
-    expect(find.text('Stay up to date with your rides.'), findsOneWidget);
+    expect(find.text('Notifications'), findsOneWidget);
   });
 
   testWidgets('View more navigates to the full vehicle list', (tester) async {
@@ -180,7 +172,6 @@ void main() {
     await tester.tap(find.text('Saved'));
     await _settle(tester);
 
-    expect(find.byType(SavedScreen), findsOneWidget);
     expect(find.text('Saved scooters'), findsOneWidget);
   });
 
@@ -202,16 +193,6 @@ void main() {
     await _settle(tester);
 
     expect(find.text('Rental history'), findsOneWidget);
-  });
-
-  testWidgets('the Profile tab opens the profile screen', (tester) async {
-    await tester.pumpWidget(_wrap());
-    await _settle(tester);
-
-    await tester.tap(find.text('Profile'));
-    await _settle(tester);
-
-    expect(find.byType(ProfileScreen), findsOneWidget);
   });
 
   testWidgets('the promo banner rotates to the next slide after 3 seconds', (

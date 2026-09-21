@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/router/tab_navigation.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/rental_record.dart';
 import '../../widgets/app_bottom_nav.dart';
@@ -69,9 +69,24 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.canvas,
+      appBar: AppBar(
+        backgroundColor: AppColors.ink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Rental History',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: AppColors.onDark,
+          ),
+        ),
+      ),
       body: Column(
         children: [
-          _Header(),
+          _Header(
+            onBack: () =>
+                context.canPop() ? context.pop() : context.go('/home'),
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
@@ -105,14 +120,37 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
       ),
       bottomNavigationBar: AppBottomNav(
         current: AppNavTab.rentals,
-        onTap: (tab) => goToTab(context, tab, from: AppNavTab.rentals),
+        onTap: (tab) {
+          if (tab == AppNavTab.rentals) return;
+          if (tab == AppNavTab.home) {
+            context.canPop() ? context.pop() : context.go('/home');
+            return;
+          }
+          if (tab == AppNavTab.map) {
+            context.push('/map');
+            return;
+          }
+          if (tab == AppNavTab.saved) {
+            context.push('/saved');
+            return;
+          }
+          if (tab == AppNavTab.profile) {
+            context.push('/profile');
+            return;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('The ${tab.name} tab is coming soon.')),
+          );
+        },
       ),
     );
   }
 }
 
 class _Header extends StatelessWidget {
-  const _Header();
+  const _Header({required this.onBack});
+
+  final VoidCallback onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +164,32 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Semantics(
+                button: true,
+                label: 'Back',
+                child: GestureDetector(
+                  onTap: onBack,
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.inkBorder,
+                        width: 0.7,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.arrow_back,
+                      size: 20,
+                      color: AppColors.onDark,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
               const Text(
                 'YOUR RIDING RECORD',
                 style: TextStyle(
