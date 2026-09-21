@@ -69,12 +69,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .trim();
     final businessName = _businessNameController.text.trim();
     await context.read<AuthProvider>().register(
-          fullName: fullName,
-          phone: phoneDigits(_phoneController.text),
-          password: _passwordController.text,
-          email: _emailController.text.trim(),
-          businessName: businessName.isEmpty ? null : businessName,
-        );
+      fullName: fullName,
+      phone: phoneDigits(_phoneController.text),
+      password: _passwordController.text,
+      email: _emailController.text.trim(),
+      businessName: businessName.isEmpty ? null : businessName,
+    );
 
     if (!mounted) return;
     setState(() => _loading = false);
@@ -101,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String? _validateBusinessName(String? v) {
     final value = v?.trim() ?? '';
-    if (value.isEmpty) return null; // Optional — blank registers as a person.
+    if (value.isEmpty) return null;
     if (value.length < 2) return 'Business name is too short';
     if (value.length > 50) return 'Business name is too long';
     return null;
@@ -280,8 +280,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: ElevatedButton(
                     key: const Key('register_create_account_button'),
                     onPressed: _loading ? null : _submit,
-                    // The CTA stays lime once the form is ready, matching the
-                    // readiness signal the original AppPrimaryButton provided.
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.onPrimary,
@@ -426,11 +424,10 @@ class _PillField extends StatelessWidget {
   static OutlineInputBorder _border({
     Color color = AppColors.border,
     double width = 1,
-  }) =>
-      OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: color, width: width),
-      );
+  }) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(30),
+    borderSide: BorderSide(color: color, width: width),
+  );
 }
 
 /// Terms + privacy consent, as a [FormField] so `_formKey.validate()` blocks
@@ -553,4 +550,3 @@ class _TermsAcceptanceState extends State<_TermsAcceptance> {
     );
   }
 }
-

@@ -23,8 +23,6 @@ class _RentalPlanScreenState extends State<RentalPlanScreen> {
   @override
   void initState() {
     super.initState();
-    // Default to "now, rounded up to the next half hour" so the mock start
-    // time is always in the future and reads cleanly (2:30 PM, not 2:07 PM).
     final now = DateTime.now();
     final minutes = now.minute <= 30 ? 30 : 60;
     _start = DateTime(
@@ -70,7 +68,6 @@ class _RentalPlanScreenState extends State<RentalPlanScreen> {
       plan: _plan,
       start: _start,
       end: _end,
-      // Mock booking reference — a real backend would issue this.
       bookingId: 'GN-BK-${_start.millisecondsSinceEpoch % 10000}',
     );
     context.push<void>('/booking-summary', extra: booking);

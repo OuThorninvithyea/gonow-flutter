@@ -133,7 +133,6 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Figma insets the header row 20pt from the card's right edge.
     return Padding(
       padding: const EdgeInsets.only(right: 20),
       child: Row(
@@ -194,8 +193,6 @@ class _OnboardingPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The Figma spacing assumes a ~932pt-tall frame. Scrolling keeps short
-    // viewports (small phones, landscape) usable instead of clipping content.
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,8 +251,6 @@ class _Illustration extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Figma positions the mockup against a 390.4pt-wide card. Scale those
-        // coordinates so the crop holds on narrower and wider screens.
         final scale = constraints.maxWidth / _designWidth;
         final rect = page.imageRect;
 

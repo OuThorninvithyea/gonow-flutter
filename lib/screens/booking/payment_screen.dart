@@ -32,18 +32,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void _viewBooking() {
-    // Replaces the whole stack (plan → summary → payment) so the back
-    // button from the confirmation screen doesn't walk the rider back
-    // through a payment that has already gone through.
     context.go('/booking-confirmed', extra: widget.booking);
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      // The charge is already "in flight" the moment this screen opens —
-      // let the rider dismiss the success card, but not walk back out of
-      // an in-progress payment.
       canPop: _succeeded,
       child: Scaffold(
         backgroundColor: AppColors.canvas,
@@ -157,9 +151,6 @@ class _ProcessingCard extends StatelessWidget {
             child: Stack(
               children: [
                 Container(color: AppColors.progressTrack),
-                // Animates across the whole wait so the bar always finishes
-                // right as [PaymentScreen] flips to the success card,
-                // rather than a static mock fraction.
                 TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0, end: 1),
                   duration: duration,

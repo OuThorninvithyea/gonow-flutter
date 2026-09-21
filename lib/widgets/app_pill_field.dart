@@ -57,8 +57,6 @@ class AppPillField extends StatelessWidget {
         ),
         filled: false,
         counterText: maxLength != null ? '' : null,
-        // Vertical padding is what produces the 58.29pt height alongside the
-        // 16pt text; a fixed SizedBox would clip the validation message.
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 18,

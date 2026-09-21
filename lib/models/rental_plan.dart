@@ -1,4 +1,3 @@
-
 enum RentalPlan {
   daily(
     title: 'Daily',

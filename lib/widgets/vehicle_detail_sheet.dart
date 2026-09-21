@@ -32,9 +32,6 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
   @override
   void initState() {
     super.initState();
-    // Default to the first available color rather than always colors[0], so
-    // a vehicle whose default paint is sold out doesn't open on a disabled
-    // option with nothing pre-selected.
     _selectedColor = widget.vehicle.colors.firstWhere(
       (c) => c.available,
       orElse: () => widget.vehicle.colors.first,
@@ -46,12 +43,8 @@ class _VehicleDetailSheetState extends State<_VehicleDetailSheet> {
     setState(() => _booking = true);
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
-    // Grab the router before popping: the sheet's context is defunct once
-    // it's gone, so it can't be used to push the next route.
     final router = GoRouter.of(context);
     Navigator.of(context).pop();
-    // Renting now picks a plan rather than booking outright — Figma
-    // "Choose your rental plan." is the next step in the flow.
     await router.push<void>('/rental-plan', extra: widget.vehicle);
   }
 

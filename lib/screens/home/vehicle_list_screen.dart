@@ -21,7 +21,7 @@ class VehicleListScreen extends StatefulWidget {
 }
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
-  int _categoryIndex = 1; // Figma defaults to "e-scooter" selected.
+  int _categoryIndex = 1;
 
   List<VehicleListing> get _visible {
     final category = _categories[_categoryIndex];

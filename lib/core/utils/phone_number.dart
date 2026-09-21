@@ -37,8 +37,6 @@ class CambodianPhoneFormatter extends TextInputFormatter {
         : digits;
     final formatted = formatPhoneDigits(capped);
 
-    // Count the digits ahead of the caret and re-find that position in the
-    // grouped string, so typing mid-number doesn't fling the caret around.
     final caret = newValue.selection.end.clamp(0, newValue.text.length);
     final target = phoneDigits(newValue.text.substring(0, caret)).length;
 

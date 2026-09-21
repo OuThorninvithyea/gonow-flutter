@@ -23,7 +23,7 @@ class RentalHistoryScreen extends StatefulWidget {
 
 class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
   late final List<DateTime> _months = _monthsWithRides();
-  late int _monthIndex = 0; // Most recent month first.
+  late int _monthIndex = 0;
 
   List<DateTime> _monthsWithRides() {
     final seen = <DateTime>{};
@@ -45,13 +45,12 @@ class _RentalHistoryScreenState extends State<RentalHistoryScreen> {
               r.start.month == _selectedMonth.month,
         )
         .toList();
-    // Most recent ride first, matching how the Figma list reads top-down.
     rides.sort((a, b) => b.start.compareTo(a.start));
     return rides;
   }
 
   Future<void> _pickMonth() async {
-    if (_months.length < 2) return; // Nothing to switch to.
+    if (_months.length < 2) return;
     final picked = await showModalBottomSheet<int>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -354,8 +353,6 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        // Only a real control when there's more than one month to switch
-        // between — otherwise it's a plain label, not a dead-tap button.
         if (changeable)
           GestureDetector(
             onTap: onTap,

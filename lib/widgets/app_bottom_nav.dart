@@ -119,8 +119,6 @@ class _NavButton extends StatelessWidget {
                 item.asset,
                 width: item.size.width,
                 height: item.size.height,
-                // The exported icons are flat black (profile is a grey
-                // stroke), so state has to come from a tint.
                 colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
               ),
               const SizedBox(height: 4),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../models/vehicle_listing.dart';
 
-
 class VehicleColorPicker extends StatelessWidget {
   const VehicleColorPicker({
     super.key,
@@ -34,10 +33,7 @@ class VehicleColorPicker extends StatelessWidget {
             if (!selected.available) ...[
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppColors.danger.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(30),
@@ -116,10 +112,7 @@ class _Swatch extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: option.swatch,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.border,
-                      width: 0.5,
-                    ),
+                    border: Border.all(color: AppColors.border, width: 0.5),
                   ),
                 ),
                 if (disabled)

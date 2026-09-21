@@ -78,8 +78,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.border),
         ),
-        // Deviation from Figma: the design has no input states. A lime hairline
-        // on white is effectively invisible, so focus uses ink instead.
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.ink, width: 1.5),

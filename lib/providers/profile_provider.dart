@@ -31,9 +31,7 @@ class ProfileProvider extends ChangeNotifier {
         email: prefs.getString(_emailKey) ?? _user.email,
       );
       notifyListeners();
-    } catch (_) {
-      // Keep local testing usable even if persistence is unavailable.
-    }
+    } catch (_) {}
   }
 
   Future<void> update({String? fullName, String? phone, String? email}) async {
@@ -50,8 +48,6 @@ class ProfileProvider extends ChangeNotifier {
       await prefs.setString(_nameKey, _user.fullName);
       await prefs.setString(_phoneKey, _user.phone);
       await prefs.setString(_emailKey, _user.email ?? '');
-    } catch (_) {
-      // In-memory update already applied.
-    }
+    } catch (_) {}
   }
 }

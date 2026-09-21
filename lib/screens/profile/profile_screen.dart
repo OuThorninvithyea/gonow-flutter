@@ -40,10 +40,8 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.history,
                       label: 'Ride History',
                       value: '${mockRideHistory.length} rides',
-                      onTap: () => _requireSignIn(
-                        context,
-                        'sync your ride history',
-                      ),
+                      onTap: () =>
+                          _requireSignIn(context, 'sync your ride history'),
                     ),
                     const _MenuDivider(),
                     _MenuRow(
@@ -61,21 +59,13 @@ class ProfileScreen extends StatelessWidget {
                     _MenuRow(
                       icon: Icons.settings_outlined,
                       label: 'Settings',
-                      onTap: () => _requireSignIn(
-                        context,
-                        'change your settings',
-                      ),
+                      onTap: () =>
+                          _requireSignIn(context, 'change your settings'),
                     ),
                     const _MenuDivider(),
-                    _MenuRow(
-                      icon: Icons.help_outline,
-                      label: 'Help & Support',
-                    ),
+                    _MenuRow(icon: Icons.help_outline, label: 'Help & Support'),
                     const _MenuDivider(),
-                    _MenuRow(
-                      icon: Icons.info_outline,
-                      label: 'Legal & About',
-                    ),
+                    _MenuRow(icon: Icons.info_outline, label: 'Legal & About'),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -179,11 +169,7 @@ const _cardDecoration = BoxDecoration(
   color: AppColors.surface,
   borderRadius: BorderRadius.all(Radius.circular(16)),
   boxShadow: [
-    BoxShadow(
-      color: Color(0x14000000),
-      blurRadius: 12,
-      offset: Offset(0, 4),
-    ),
+    BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, 4)),
   ],
 );
 

@@ -28,8 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  String? _validateIdentifier(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Enter your email or phone number' : null;
+  String? _validateIdentifier(String? v) => (v == null || v.trim().isEmpty)
+      ? 'Enter your email or phone number'
+      : null;
 
   String? _validatePassword(String? v) => (v == null || v.length < 6)
       ? 'Password must be at least 6 characters'
@@ -101,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   prefixIcon: Icons.lock_outline,
                   suffixIcon: IconButton(
                     key: const Key('login_show_password_button'),
-                    tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+                    tooltip: _obscurePassword
+                        ? 'Show password'
+                        : 'Hide password',
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                     icon: Icon(
@@ -269,10 +272,7 @@ class _PillField extends StatelessWidget {
       style: const TextStyle(fontSize: 16, color: AppColors.ink),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(
-          fontSize: 16,
-          color: AppColors.inkSoft,
-        ),
+        hintStyle: const TextStyle(fontSize: 16, color: AppColors.inkSoft),
         prefixIcon: prefixIcon == null
             ? null
             : Icon(prefixIcon, size: 20, color: AppColors.inkSoft),
@@ -293,11 +293,10 @@ class _PillField extends StatelessWidget {
   static OutlineInputBorder _border({
     Color color = AppColors.border,
     double width = 1,
-  }) =>
-      OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: color, width: width),
-      );
+  }) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(30),
+    borderSide: BorderSide(color: color, width: width),
+  );
 }
 
 class _OrDivider extends StatelessWidget {
@@ -386,10 +385,7 @@ class _SocialButton extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),

@@ -7,13 +7,9 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // --- Brand ---------------------------------------------------------------
-
   /// Primary action colour. Always pair with [onPrimary] for text and icons.
   static const primary = Color(0xFFC7FF47);
   static const onPrimary = Color(0xFF292D32);
-
-  // --- Dark surfaces -------------------------------------------------------
 
   /// Dark card / header fill, and the default heading colour on light.
   static const ink = Color(0xFF292D32);
@@ -23,8 +19,6 @@ class AppColors {
 
   /// Hairline outline on a dark surface (e.g. the back button).
   static const inkBorder = Color(0xFF43464B);
-
-  // --- Light surfaces ------------------------------------------------------
 
   static const background = Color(0xFFFFFFFF);
   static const surface = Color(0xFFFFFFFF);
@@ -37,8 +31,6 @@ class AppColors {
 
   /// Hairline separator, e.g. the top edge of the bottom navigation bar.
   static const divider = Color(0xFFE4E8E3);
-
-  // --- Text ----------------------------------------------------------------
 
   /// Muted supporting text on a light surface.
   static const inkSoft = Color(0xFF8A9095);
@@ -69,8 +61,6 @@ class AppColors {
   /// Label on the inactive dark chip.
   static const onDarkChip = Color(0xFFC5C6C8);
 
-  // --- Rental plan screen (Figma "Choose your rental plan.") --------------
-
   /// Warm off-white page background behind the plan cards.
   static const canvas = Color(0xFFF7F8F4);
 
@@ -94,9 +84,6 @@ class AppColors {
 
   /// Footnote under the schedule card.
   static const planFootnote = Color(0xFF777E79);
-
-  // --- Payment flow (Figma "payment-flow": booking summary, processing,
-  // and booking-confirmed screens) -----------------------------------------
 
   /// Hairline divider inside receipt-style cards.
   static const receiptDivider = Color(0xFFEDF0EB);
@@ -130,16 +117,11 @@ class AppColors {
   /// Checkmark glyph color on the lime "payment successful" badge.
   static const successCheckDark = Color(0xFF203026);
 
-  // --- Map screen (Figma "iPhone 16 Plus - 13": static Mapsicle image,
-  // no live map SDK) -------------------------------------------------------
-
   /// Text on the lime "Available" badge over a vehicle card on the map.
   static const mapAvailableText = Color(0xFF395100);
 
   /// "Phnom Penh" location label in the map header, over the dark scrim.
   static const mapLocationLabel = Color(0xFFD8D8D8);
-
-  // --- Rental history (Figma "RentalHistoryScreen") -----------------------
 
   /// "This month" / "Total spent" stat captions and each ride row's
   /// date · time · duration line.
@@ -151,8 +133,6 @@ class AppColors {
 
   /// "Receipt" link on each ride row.
   static const historyReceiptLink = Color(0xFF587300);
-
-  // --- Saved screen (Figma "SavedScreen") -----------------------------------
 
   /// "N saved" count pill on the dark header.
   static const profileVerifiedChipBg = Color(0x1FFFFFFF);
@@ -167,12 +147,8 @@ class AppColors {
   /// Filled heart on a saved-vehicle card — tapping it unsaves the vehicle.
   static const savedHeartFill = Color(0xFFD94141);
 
-  // --- Navigation ----------------------------------------------------------
-
   static const navActive = Color(0xFF415F00);
   static const navInactive = Color(0xFF7B837E);
-
-  // --- Status --------------------------------------------------------------
 
   static const success = Color(0xFF17B26A);
   static const danger = Color(0xFFD92D20);
