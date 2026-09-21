@@ -68,16 +68,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Applies profile edits to the signed-in user. No-ops for a guest.
-  void updateProfile({String? fullName, String? phone, String? email}) {
-    if (_user == null) return;
-    _user = _user!.copyWith(
-      fullName: fullName,
-      phone: phone,
-      email: email,
-    );
-    notifyListeners();
-  }
+  /// Clears the local session data used by the profile development flow.
+  void clearLocalAuthData() => logout();
 
   Future<void> requestPasswordReset(String identifier) async {
     await Future.delayed(const Duration(milliseconds: 600));
