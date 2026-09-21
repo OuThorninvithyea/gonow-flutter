@@ -7,7 +7,10 @@ import 'package:gonow/widgets/vehicle_color_picker.dart';
 void main() {
   const colors = vehicleColorOptions;
 
-  Widget wrap(VehicleColorOption selected, ValueChanged<VehicleColorOption> onSelected) {
+  Widget wrap(
+    VehicleColorOption selected,
+    ValueChanged<VehicleColorOption> onSelected,
+  ) {
     return MaterialApp(
       home: Scaffold(
         body: VehicleColorPicker(
@@ -31,9 +34,7 @@ void main() {
     tester,
   ) async {
     VehicleColorOption? picked;
-    await tester.pumpWidget(
-      wrap(colors[0], (c) => picked = c),
-    );
+    await tester.pumpWidget(wrap(colors[0], (c) => picked = c));
     await tester.pumpAndSettle();
 
     // Black is the second, available swatch.
